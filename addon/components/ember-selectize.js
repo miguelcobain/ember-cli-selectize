@@ -110,21 +110,20 @@ export default Ember.Component.extend({
     //Normalize create property if createAction was set
     if(createAction && (createAction !== 'create')){
       allowCreate = true;
-
-      //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
-      return {
-        plugins: this.plugins,
-        labelField : 'label',
-        valueField : 'value',
-        searchField : 'label',
-        create: allowCreate ? Ember.$.proxy(this._create, this) : false,
-        onItemAdd : Ember.$.proxy(this._onItemAdd, this),
-        onItemRemove : Ember.$.proxy(this._onItemRemove, this),
-        onType : Ember.$.proxy(this._onType, this),
-        render: get(this, 'renderOptions'),
-        placeholder: get(this,'placeholder')
-      };
     }
+    //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
+    return {
+      plugins: this.plugins,
+      labelField : 'label',
+      valueField : 'value',
+      searchField : 'label',
+      create: allowCreate ? Ember.$.proxy(this._create, this) : false,
+      onItemAdd : Ember.$.proxy(this._onItemAdd, this),
+      onItemRemove : Ember.$.proxy(this._onItemRemove, this),
+      onType : Ember.$.proxy(this._onType, this),
+      render: get(this, 'renderOptions'),
+      placeholder: get(this,'placeholder')
+    };
   }),
 
   didInsertElement : function() {
