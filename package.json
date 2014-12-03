@@ -1,7 +1,7 @@
 {
   "name": "ember-cli-selectize",
   "version": "0.0.3",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "An Ember and Selectize integration, packaged as an Ember-cli addon.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/miguelcobain/ember-selectize.git"
+    "url": "git://github.com/miguelcobain/ember-cli-selectize.git"
   },
   "engines": {
     "node": ">= 0.10.0"
