@@ -4,7 +4,7 @@ An Ember and Selectize integration, packaged as an Ember-cli addon. Check [Selec
 
 ## Demo
 
-Check http://miguelcobain.github.io/ember-selectize
+Check (old demo): http://miguelcobain.github.io/ember-selectize
 
 ## Browser Support
 
@@ -13,6 +13,7 @@ Should run wherever Ember and Selectize run.
 ## Installation
 
 Run `npm install --save-dev ember-cli-selectize` on your project folder.
+
 Run `ember g ember-cli-selectize` to install selectize dependency from bower.
 
 ## Usage
