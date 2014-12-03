@@ -18,8 +18,4 @@ var app = new EmberAddon();
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
 
-var selectizePath   = 'bower_components/selectize/dist/';
-app.import(selectizePath+'js/standalone/selectize.js');
-app.import(selectizePath+'css/selectize.css');
-
 module.exports = app.toTree();

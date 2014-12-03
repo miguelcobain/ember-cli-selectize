@@ -13,11 +13,8 @@ var name = packageDetails.name;
 
 var appTree = pickFiles('../app', { srcDir: '/', destDir: 'app'});
 
-var templateTree = templateCompiler('../app/templates', { module: true });
-templateTree = pickFiles(templateTree, {srcDir: '/', destDir: 'app/templates'});
-
 var addonTree = pickFiles('../addon', {srcDir: '/', destDir: name});
-var precompiled = mergeTrees([addonTree, appTree, templateTree]);
+var precompiled = mergeTrees([addonTree, appTree]);
 var registrations = registry(pickFiles(precompiled, {srcDir: '/app', destDir: '/'}));
 var bower = pickFiles('../bower_components', {srcDir: '/loader.js', destDir: '/'});
 var glue = new Funnel('.', { include: [/^glue\.js$/] });
@@ -34,15 +31,4 @@ var compiled = compileES6(jsTree, {
 });
 compiled = wrap(compiled);
 
-var css = new Funnel('../vendor', {
-  include: [/\.css$/],
-  getDestinationPath: function(relativePath) {
-    var cssFile = name + '.css';
-    if (relativePath === cssFile) {
-      return '/' + name + '-' + version + '.css';
-    }
-    return relativePath;
-  }
-});
-
-module.exports = mergeTrees([es3Safe(compiled), css]);
+module.exports = mergeTrees([es3Safe(compiled)]);
