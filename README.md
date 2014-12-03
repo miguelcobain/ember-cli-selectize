@@ -13,10 +13,11 @@ Should run wherever Ember and Selectize run.
 ## Installation
 
 Run `npm install --save-dev ember-cli-selectize` on your project folder.
+Run `ember g ember-cli-selectize` to install selectize dependency from bower.
 
 ## Usage
 
-This addons provides `ember-selectize` component.
+This addon provides `ember-selectize` component.
 Its usage should be very similar to `Ember.Select`, but with additional features.
 
 ```handlebars

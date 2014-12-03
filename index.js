@@ -1,11 +1,13 @@
 /* jshint node: true */
 'use strict';
 
+var path = require('path');
+
+
 module.exports = {
   name: 'ember-cli-selectize',
   included: function(app) {
-    var selectizePath   = 'bower_components/selectize/dist/';
-    app.import(selectizePath+'js/standalone/selectize.js');
-    app.import(selectizePath+'css/selectize.css');
+    app.import('bower_components/selectize/dist/js/standalone/selectize.js');
+    app.import('bower_components/selectize/dist/css/selectize.css');
   }
 };
