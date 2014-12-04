@@ -33,12 +33,31 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 
 ```handlebars
 {{ember-selectize
-  content=controller.types
+  content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.name"
-  selection=model.type
-  placeholder="Select an option" }}
+  selection=model.item
+  placeholder="Select an item" }}
 ```
+
+### Properties
+
+- `content` - Array containing all the options to select from
+- `selection` - Ember-selectize will set this binding to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
+- `optionValuePath` - Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`
+- `optionLabelPath` - Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. Example: `content.name`
+- `placeholder` or `prompt` - Set any of these to display a text when there is no choice made. Example `"Please select an- option"`
+- `disabled` - If `true` disables changes in selectize
+- `multiple` - If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
+- `create` - if to `true` ember-selectize will enter creation mode. This allows the user to create a new item. A `create` action will be sent to the controller to let you handle the logic. You must add the item to the content array in that logic.
+- `createAction` - you can customize the name of the action sent to the controller. If you set this, you don't need to set `create=true`.
+- `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
+- `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
+- `loadingClass` - Customize the loading class name. Default value: `loading`
+- `optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` - Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
+
+More info:
+- ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
 
 ## Running
 
