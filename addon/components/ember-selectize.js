@@ -45,13 +45,10 @@ export default Ember.Component.extend({
   inDOM: false,
 
   /**
-  * Pass true to 'create' property to enable tag creation mode.
-  * When active, ember-selectize will send a 'create' action to its controller when a tag is created.
-  * Alternatively, you can pass a string to 'createAction' property and
-  * ember-selectize will activate tag creation mode send an action with that name to its controller.
+  * Pass a string to 'create' property to enable tag creation mode.
+  * When active, ember-selectize will send an action with that name to the application when a tag is created.
   */
   create:false,
-  createAction:'create',
 
   /**
   * Loading feature default values.
@@ -105,12 +102,7 @@ export default Ember.Component.extend({
 
   selectizeOptions: Ember.computed(function() {
     var allowCreate = get(this, 'create');
-    var createAction = get(this, 'createAction');
 
-    //Normalize create property if createAction was set
-    if(createAction && (createAction !== 'create')){
-      allowCreate = true;
-    }
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
     return {
       plugins: this.plugins,
@@ -160,8 +152,8 @@ export default Ember.Component.extend({
   _create:function(input,callback){
     // Delete user entered text
     this.selectize.setTextboxValue('');
-    // Send action to controller
-    get(this,'controller').send(get(this,'createAction'),input);
+    // Send create action
+    this.sendAction('create',input);
     // We cancel the creation here, so it's up to you to include the created element
     // in the content and selection property
     callback(null);

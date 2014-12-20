@@ -18,5 +18,10 @@ export default Ember.Controller.extend({
       id:4,
       label:'Item 4'
     })
-  ]
+  ],
+  actions:{
+    createAction:function(str){
+      alert(str);
+    }
+  }
 });

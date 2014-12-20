@@ -1,7 +1,9 @@
-<h2 id='title'>Ember-cli-selectize</h2>
+<h2 id='title'>Selectize test</h2>
 
 {{ember-selectize
-  content=items
+  content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
-}}
+  selection=model.item
+  create="createAction"
+  placeholder="Select an item" }}
