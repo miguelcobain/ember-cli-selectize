@@ -12,7 +12,11 @@ Should run wherever Ember and Selectize run.
 
 ## Installation
 
-### As an Ember CLI addon
+### As an Ember CLI addon (0.1.5 or later)
+
+Run `ember install:addon ember-cli-selectize` on your project folder.
+
+### As an Ember CLI addon (prior to 0.1.5)
 
 Run `npm install --save-dev ember-cli-selectize` on your project folder.
 
@@ -28,7 +32,7 @@ Copy to your vendor directory and link up the .js file.
 
 ## Usage
 
-This addon provides `ember-selectize` component.
+This addon provides an `ember-selectize` component.
 Its usage should be very similar to `Ember.Select`, but with additional features.
 
 ```handlebars
@@ -39,6 +43,26 @@ Its usage should be very similar to `Ember.Select`, but with additional features
   selection=model.item
   placeholder="Select an item" }}
 ```
+
+### Theme customization
+
+You can customize which theme to use in your Brocfile.
+```javascript
+//your-app/Brocfile.js
+
+var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+var app = new EmberApp({
+  'ember-cli-selectize': {
+    //valid values are `default`, `bootstrap2` and `bootstrap3`
+    'theme': 'bootstrap3'
+  }
+});
+
+module.exports = app.toTree();
+```
+
+If you want to use the default theme, you don't need to specify an option.
 
 ### Properties
 
