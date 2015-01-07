@@ -44,26 +44,6 @@ Its usage should be very similar to `Ember.Select`, but with additional features
   placeholder="Select an item" }}
 ```
 
-### Theme customization
-
-You can customize which theme to use in your Brocfile.
-```javascript
-//your-app/Brocfile.js
-
-var EmberApp = require('ember-cli/lib/broccoli/ember-app');
-
-var app = new EmberApp({
-  'ember-cli-selectize': {
-    //valid values are `default`, `bootstrap2` and `bootstrap3`
-    'theme': 'bootstrap3'
-  }
-});
-
-module.exports = app.toTree();
-```
-
-If you want to use the default theme, you don't need to specify an option.
-
 ### Properties
 
 - `content` - Array containing all the options to select from
@@ -81,6 +61,27 @@ If you want to use the default theme, you don't need to specify an option.
 
 More info:
 - ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
+
+### Theme customization
+
+You can customize which theme to use in your Brocfile.
+```javascript
+//your-app/Brocfile.js
+
+var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+var app = new EmberApp({
+  'ember-cli-selectize': {
+    //valid values are `default`, `bootstrap2`, `bootstrap3` or false
+    'theme': 'bootstrap3'
+  }
+});
+
+module.exports = app.toTree();
+```
+
+If you want to use the default theme, you don't need to specify any option.
+If you don't want to include any css at all for some reason, simply assign `false` or any "falsy" value to the `theme` option.
 
 ## Running
 
