@@ -8,7 +8,7 @@ var get = Ember.get, set = Ember.set, isArray = Ember.isArray, typeOf = Ember.ty
  * The goal is to use this as a near dropin replacement for Ember.Select.
  */
 export default Ember.Component.extend({
-  attributeBindings : ['multiple','autocomplete'],
+  attributeBindings : ['multiple','autocomplete','required'],
   classNames : ['ember-selectize'],
 
   autocomplete:'off',
