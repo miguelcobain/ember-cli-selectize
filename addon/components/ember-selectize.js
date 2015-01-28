@@ -18,6 +18,8 @@ export default Ember.Component.extend({
   }),
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
+  sortField: 'label',
+  sortDirection: 'asc',
   tagName : 'select',
 
   /**
@@ -113,6 +115,10 @@ export default Ember.Component.extend({
       labelField : 'label',
       valueField : 'value',
       searchField : 'label',
+      sortField: {
+        field: get(this, 'sortField'),
+        direction: get(this, 'sortDirection')
+      },
       create: allowCreate ? Ember.$.proxy(this._create, this) : false,
       onItemAdd : Ember.$.proxy(this._onItemAdd, this),
       onItemRemove : Ember.$.proxy(this._onItemRemove, this),
