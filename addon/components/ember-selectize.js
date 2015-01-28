@@ -12,7 +12,10 @@ export default Ember.Component.extend({
   classNames : ['ember-selectize'],
 
   autocomplete:'off',
-  maxItems: null,
+  multiple: false,
+  maxItems: Ember.computed('multiple',function(){
+    return get(this,'multiple') ? null : 1;
+  }),
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
   tagName : 'select',
