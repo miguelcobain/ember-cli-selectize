@@ -12,6 +12,7 @@ export default Ember.Component.extend({
   classNames : ['ember-selectize'],
 
   autocomplete:'off',
+  maxItems: null,
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
   tagName : 'select',
@@ -114,7 +115,8 @@ export default Ember.Component.extend({
       onItemRemove : Ember.$.proxy(this._onItemRemove, this),
       onType : Ember.$.proxy(this._onType, this),
       render: get(this, 'renderOptions'),
-      placeholder: get(this,'placeholder')
+      placeholder: get(this,'placeholder'),
+      maxItems: get(this, 'maxItems')
     };
   }),
 
