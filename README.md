@@ -53,6 +53,7 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `placeholder` or `prompt` - Set any of these to display a text when there is no choice made. Example `"Please select an- option"`
 - `disabled` - If `true` disables changes in selectize
 - `multiple` - If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
+- `maxItems` - If `multiple` is true, you can optionally set this to limit the number of selections.
 - `create` - Pass a string to 'create' property to enable tag creation mode. When active, ember-selectize will send an action with that name to the application when a tag is created. The text is sent as a parameter.
 - `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
 - `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
