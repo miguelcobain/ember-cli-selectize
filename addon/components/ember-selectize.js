@@ -123,15 +123,7 @@ export default Ember.Component.extend({
       placeholder: get(this,'placeholder'),
       maxItems: get(this, 'maxItems')
     };
-    if(get(this,'sortField')){
-      var sortOptions = {
-        sortField: {
-          field: 'sortField',
-          direction: get(this,'sortDirection')
-        }
-      }
-      Ember.merge(options, sortOptions);
-    }
+    options = this._mergeSortField(options);
 
     return options;
   }),
@@ -407,8 +399,15 @@ export default Ember.Component.extend({
         data : obj
       };
 
-      if(get(this,'sortField')){
-        data.sortField = get(obj, get(this,'sortField'));
+      var sortField = get(this,'sortField');
+      if(sortField) {
+        if(isArray(sortField)) {
+          sortField.forEach(function(field){
+            data[field.field] = get(obj, field.field);
+          });
+        } else {
+          data[sortField] = get(obj, sortField);
+        }
       }
 
       Ember.addObserver(obj,get(this,'_labelPath'),this,'_labelDidChange');
@@ -419,8 +418,9 @@ export default Ember.Component.extend({
         data : obj
       };
 
-      if(get(this,'sortField')){
-        data.sortField = obj;
+      var sortField = get(this,'sortField');
+      if(sortField && !isArray(sortField)) {
+        data[sortField] = obj;
       }
     }
 
@@ -517,5 +517,25 @@ export default Ember.Component.extend({
     var buffer = new Ember.RenderBuffer();
     view.renderToBuffer(buffer);
     return buffer.string();
+  },
+
+  _mergeSortField:function(options){
+    var sortField = get(this, 'sortField');
+    if(sortField) {
+      var sortArray = this._getSortArray(sortField);
+      Ember.merge(options, { sortField: sortArray });
+    }
+    return options;
+  },
+
+  _getSortArray:function(sortField){
+    if (isArray(sortField)) {
+      return sortField;
+    } else {
+      return [{
+        field: sortField,
+        direction: get(this,'sortDirection')
+      }];
+    }
   }
 });
