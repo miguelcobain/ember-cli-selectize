@@ -18,7 +18,7 @@ export default Ember.Component.extend({
   }),
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
-  sortField: 'label',
+  sortField: null,
   sortDirection: 'asc',
   tagName : 'select',
 
@@ -110,15 +110,11 @@ export default Ember.Component.extend({
     var allowCreate = get(this, 'create');
 
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
-    return {
+    var options = {
       plugins: this.plugins,
       labelField : 'label',
       valueField : 'value',
       searchField : 'label',
-      sortField: {
-        field: get(this, 'sortField'),
-        direction: get(this, 'sortDirection')
-      },
       create: allowCreate ? Ember.$.proxy(this._create, this) : false,
       onItemAdd : Ember.$.proxy(this._onItemAdd, this),
       onItemRemove : Ember.$.proxy(this._onItemRemove, this),
@@ -127,6 +123,17 @@ export default Ember.Component.extend({
       placeholder: get(this,'placeholder'),
       maxItems: get(this, 'maxItems')
     };
+    if(get(this,'sortField')){
+      var sortOptions = {
+        sortField: {
+          field: 'sortField',
+          direction: get(this,'sortDirection')
+        }
+      }
+      Ember.merge(options, sortOptions);
+    }
+
+    return options;
   }),
 
   didInsertElement : function() {
@@ -399,6 +406,11 @@ export default Ember.Component.extend({
         value : get(obj, get(this,'_valuePath')),
         data : obj
       };
+
+      if(get(this,'sortField')){
+        data.sortField = get(obj, get(this,'sortField'));
+      }
+
       Ember.addObserver(obj,get(this,'_labelPath'),this,'_labelDidChange');
     } else {
       data = {
@@ -406,6 +418,10 @@ export default Ember.Component.extend({
         value : obj,
         data : obj
       };
+
+      if(get(this,'sortField')){
+        data.sortField = obj;
+      }
     }
 
     if(this.selectize){
