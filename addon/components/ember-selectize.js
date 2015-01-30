@@ -29,7 +29,7 @@ export default Ember.Component.extend({
   /**
   * The array of the default plugins to load into selectize
   */
-  plugins: [],
+  plugins: ['remove_button'],
 
   /**
   * Computed properties that hold the processed paths ('content.' replacement),
