@@ -109,7 +109,7 @@ export default Ember.Component.extend({
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
-      this.plugins = this.plugins.split(',');
+      this.plugins = this.plugins === "" ? [] : this.plugins.split(',');
     }
 
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
