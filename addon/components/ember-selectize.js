@@ -107,6 +107,11 @@ export default Ember.Component.extend({
   selectizeOptions: Ember.computed(function() {
     var allowCreate = get(this, 'create');
 
+    //Split the passed in plugin config into an array.
+    if (typeof this.plugins === 'string') {
+      this.plugins = this.plugins === "" ? [] : this.plugins.split(',').map(item => item.trim() )
+    }
+
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
     return {
       plugins: this.plugins,
