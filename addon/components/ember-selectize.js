@@ -29,7 +29,7 @@ export default Ember.Component.extend({
   /**
   * The array of the default plugins to load into selectize
   */
-  plugins: ['remove_button'],
+  plugins: [],
 
   /**
   * Computed properties that hold the processed paths ('content.' replacement),
@@ -106,6 +106,11 @@ export default Ember.Component.extend({
 
   selectizeOptions: Ember.computed(function() {
     var allowCreate = get(this, 'create');
+
+    //Split the passed in plugin config into an array.
+    if (typeof this.plugins === 'string') {
+      this.plugins = this.plugins.split(',');
+    }
 
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
     return {
