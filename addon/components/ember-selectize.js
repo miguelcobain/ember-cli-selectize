@@ -18,6 +18,8 @@ export default Ember.Component.extend({
   }),
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
+  sortField: null,
+  sortDirection: 'asc',
   tagName : 'select',
 
   /**
@@ -113,7 +115,7 @@ export default Ember.Component.extend({
     }
 
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
-    return {
+    var options = {
       plugins: this.plugins,
       labelField : 'label',
       valueField : 'value',
@@ -126,6 +128,9 @@ export default Ember.Component.extend({
       placeholder: get(this,'placeholder'),
       maxItems: get(this, 'maxItems')
     };
+    options = this._mergeSortField(options);
+
+    return options;
   }),
 
   didInsertElement : function() {
@@ -398,6 +403,18 @@ export default Ember.Component.extend({
         value : get(obj, get(this,'_valuePath')),
         data : obj
       };
+
+      var sortField = get(this,'sortField');
+      if(sortField) {
+        if(isArray(sortField)) {
+          sortField.forEach(function(field){
+            data[field.field] = get(obj, field.field);
+          });
+        } else {
+          data[sortField] = get(obj, sortField);
+        }
+      }
+
       Ember.addObserver(obj,get(this,'_labelPath'),this,'_labelDidChange');
     } else {
       data = {
@@ -405,6 +422,11 @@ export default Ember.Component.extend({
         value : obj,
         data : obj
       };
+
+      var sortField = get(this,'sortField');
+      if(sortField && !isArray(sortField)) {
+        data[sortField] = obj;
+      }
     }
 
     if(this.selectize){
@@ -500,5 +522,25 @@ export default Ember.Component.extend({
     var buffer = new Ember.RenderBuffer();
     view.renderToBuffer(buffer);
     return buffer.string();
+  },
+
+  _mergeSortField:function(options){
+    var sortField = get(this, 'sortField');
+    if(sortField) {
+      var sortArray = this._getSortArray(sortField);
+      Ember.merge(options, { sortField: sortArray });
+    }
+    return options;
+  },
+
+  _getSortArray:function(sortField){
+    if (isArray(sortField)) {
+      return sortField;
+    } else {
+      return [{
+        field: sortField,
+        direction: get(this,'sortDirection')
+      }];
+    }
   }
 });
