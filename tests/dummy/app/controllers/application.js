@@ -19,6 +19,7 @@ export default Ember.Controller.extend({
       label:'Item 4'
     })
   ],
+  names:['Tom','Yehuda','Mike'],
   actions:{
     createAction:function(str){
       alert(str);
