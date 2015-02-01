@@ -111,7 +111,7 @@ export default Ember.Component.extend({
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
-      this.plugins = this.plugins === "" ? [] : this.plugins.split(',').map(item => item.trim() )
+      this.plugins = this.plugins === "" ? [] : this.plugins.split(',').map(function(item){ return item.trim(); });
     }
 
     //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
@@ -396,7 +396,7 @@ export default Ember.Component.extend({
   * Useful for dealing with objects that 'lazy load' some properties/relationships.
   */
   objectWasAdded : function(obj) {
-    var data = {};
+    var data = {}, sortField = get(this,'sortField');
     if(typeOf(obj) === 'object' || typeOf(obj) === 'instance'){
       data = {
         label : get(obj, get(this,'_labelPath')),
@@ -404,7 +404,6 @@ export default Ember.Component.extend({
         data : obj
       };
 
-      var sortField = get(this,'sortField');
       if(sortField) {
         if(isArray(sortField)) {
           sortField.forEach(function(field){
@@ -423,7 +422,6 @@ export default Ember.Component.extend({
         data : obj
       };
 
-      var sortField = get(this,'sortField');
       if(sortField && !isArray(sortField)) {
         data[sortField] = obj;
       }
