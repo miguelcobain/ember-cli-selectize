@@ -19,7 +19,19 @@
   content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
-  value=itemValue
+  value=controller.itemValue
   create="createAction"
   placeholder="Select an item" }}
 <p>Selected: {{itemValue}}</p>
+
+{{ember-selectize
+  multiple=true
+  content=controller.items
+  optionValuePath="content.id"
+  optionLabelPath="content.label"
+  value=itemValues
+  create="createAction"
+  placeholder="Select an item" }}
+<p>Selected: {{itemValues}}</p>
+<button {{action "selectItem" 1}}>Select 1</button>
+<button {{action "selectItem" 3}}>Select 3</button>

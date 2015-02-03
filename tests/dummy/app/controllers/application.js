@@ -20,9 +20,13 @@ export default Ember.Controller.extend({
     })
   ],
   names:['Tom','Yehuda','Mike'],
+  itemValue:3,
   actions:{
     createAction:function(str){
       alert(str);
+    },
+    selectItem:function(v){
+      this.set('itemValue',v);
     }
   }
 });

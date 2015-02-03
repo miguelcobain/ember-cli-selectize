@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 var get = Ember.get, set = Ember.set, isArray = Ember.isArray, typeOf = Ember.typeOf,
-  camelize = Ember.String.camelize;
+  isNone = Ember.isNone, camelize = Ember.String.camelize;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
@@ -28,9 +28,10 @@ export default Ember.Component.extend({
   optionValuePath : 'content',
   optionLabelPath : 'content',
 
+  selection: null,
   value: Ember.computed(function(key, value) {
     if (arguments.length === 2) { return value; }
-    var valuePath = get(this, 'optionValuePath').replace(/^content\.?/, '');
+    var valuePath = get(this, '_valuePath');
     return valuePath ? get(this, 'selection.' + valuePath) : get(this, 'selection');
   }).property('selection'),
 
@@ -153,7 +154,12 @@ export default Ember.Component.extend({
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
     this._contentDidChange();
-    this._selectionDidChange();
+
+    var selection = get(this, 'selection');
+    var value = get(this, 'value');
+    if (!isNone(selection)) { this._selectionDidChange(); }
+    if (!isNone(value)) { this._valueDidChange(); }
+
     this._loadingDidChange();
   },
   willDestroyElement : function() {
@@ -195,9 +201,7 @@ export default Ember.Component.extend({
     var multiple = get(this,'multiple');
     if(content){
       var obj = content.find(function(item){
-        if((get(item,get(this,'_valuePath'))+'') === value){
-          return true;
-        }
+        return (get(item,get(this,'_valuePath'))+'') === value;
       },this);
       if(multiple && isArray(selection) && obj){
         if(!selection.findBy(get(this,'_valuePath'),get(obj,get(this,'_valuePath')))){
@@ -223,9 +227,7 @@ export default Ember.Component.extend({
     var multiple = get(this,'multiple');
     if(content){
       var obj = content.find(function(item){
-        if(get(item,get(this,'_valuePath')) === value){
-          return true;
-        }
+        return get(item,get(this,'_valuePath'))+'' === value;
       },this);
       if(multiple && isArray(selection) && obj){
         selection.removeObject(obj);
@@ -289,6 +291,23 @@ export default Ember.Component.extend({
       }
     }
   }, 'selection'),
+
+  _valueDidChange: Ember.observer('value', function() {
+    var content = get(this, 'content');
+    var value = get(this, 'value');
+    var valuePath = get(this, '_valuePath');
+    var selectedValue = (valuePath ? get(this, 'selection.' + valuePath) : get(this, 'selection'));
+    var selection;
+
+    if (value !== selectedValue) {
+      selection = content ? content.find(function(obj) {
+        return value === (valuePath ? get(obj, valuePath) : obj);
+      }) : null;
+
+      this.set('selection', selection);
+    }
+  }),
+
   /*
   * Triggered before the selection array changes
   * Here we process the removed elements
