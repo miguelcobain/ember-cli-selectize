@@ -1,37 +1,38 @@
 <h2 id='title'>Selectize test</h2>
 
-{{ember-selectize
+<p>{{ember-selectize
   content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
   selection=item
   create="createAction"
-  placeholder="Select an item" }}
+  placeholder="Select an item" }}</p>
 <p>Selected: {{item.label}}</p>
 
-{{ember-selectize
+<p>{{ember-selectize
   content=controller.names
   selection=name
-  placeholder="Select a name" }}
+  placeholder="Select a name" }}</p>
 <p>Selected: {{name}}</p>
 
-{{ember-selectize
+<p>{{ember-selectize
   content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
   value=controller.itemValue
   create="createAction"
-  placeholder="Select an item" }}
+  placeholder="Select an item" }}</p>
 <p>Selected: {{itemValue}}</p>
 
-{{ember-selectize
+<button {{action "selectItem" 1}}>Select 1</button>
+<button {{action "selectItem" 3}}>Select 3</button>
+
+<p>{{ember-selectize
   multiple=true
   content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
   value=itemValues
   create="createAction"
-  placeholder="Select an item" }}
+  placeholder="Select an item" }}</p>
 <p>Selected: {{itemValues}}</p>
-<button {{action "selectItem" 1}}>Select 1</button>
-<button {{action "selectItem" 3}}>Select 3</button>
