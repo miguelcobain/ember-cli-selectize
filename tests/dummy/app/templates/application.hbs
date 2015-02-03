@@ -4,12 +4,22 @@
   content=controller.items
   optionValuePath="content.id"
   optionLabelPath="content.label"
-  selection=model.item
+  selection=item
   create="createAction"
   placeholder="Select an item" }}
-
+<p>Selected: {{item.label}}</p>
 
 {{ember-selectize
   content=controller.names
-  selection=model.name
+  selection=name
   placeholder="Select a name" }}
+<p>Selected: {{name}}</p>
+
+{{ember-selectize
+  content=controller.items
+  optionValuePath="content.id"
+  optionLabelPath="content.label"
+  value=itemValue
+  create="createAction"
+  placeholder="Select an item" }}
+<p>Selected: {{itemValue}}</p>
