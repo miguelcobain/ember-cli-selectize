@@ -47,7 +47,8 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 ### Properties
 
 - `content` - Array containing all the options to select from
-- `selection` - Ember-selectize will set this binding to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
+- `selection` - Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
+- `value` - Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.
 - `optionValuePath` - Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`
 - `optionLabelPath` - Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. Example: `content.name`
 - `plugins` - Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`
