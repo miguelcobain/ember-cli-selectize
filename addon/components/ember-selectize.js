@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 var get = Ember.get, set = Ember.set, isArray = Ember.isArray, typeOf = Ember.typeOf,
-  getWithDefault = Ember.getWithDefault, camelize = Ember.String.camelize;
+  camelize = Ember.String.camelize;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
@@ -25,8 +25,8 @@ export default Ember.Component.extend({
   /**
   * overrideable object paths for value and label paths
   */
-  optionValuePath : null,
-  optionLabelPath : null,
+  optionValuePath : 'content',
+  optionLabelPath : 'content',
 
   /**
   * The array of the default plugins to load into selectize
@@ -38,10 +38,10 @@ export default Ember.Component.extend({
   * as it is done on Ember.Select
   */
   _valuePath : Ember.computed('optionValuePath',function(){
-    return getWithDefault(this,'optionValuePath','content.value').replace(/^content\.?/, '');
+    return get(this,'optionValuePath').replace(/^content\.?/, '');
   }),
   _labelPath : Ember.computed('optionLabelPath',function(){
-    return getWithDefault(this,'optionLabelPath','content.label').replace(/^content\.?/, '');
+    return get(this,'optionLabelPath').replace(/^content\.?/, '');
   }),
 
   /**
@@ -189,7 +189,7 @@ export default Ember.Component.extend({
     var multiple = get(this,'multiple');
     if(content){
       var obj = content.find(function(item){
-        if(get(item,get(this,'_valuePath')) === value){
+        if((get(item,get(this,'_valuePath'))+'') === value){
           return true;
         }
       },this);
