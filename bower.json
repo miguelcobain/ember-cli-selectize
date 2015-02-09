@@ -12,6 +12,6 @@
     "ember-qunit": "0.1.8",
     "ember-qunit-notifications": "0.0.5",
     "qunit": "~1.17.1",
-    "selectize": "~0.11.2"
+    "selectize": "~0.12.0"
   }
 }
