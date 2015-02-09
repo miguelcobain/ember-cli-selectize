@@ -64,6 +64,7 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `loadingClass` - Customize the loading class name. Default value: `loading`
 - `optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` - Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
 - `required` - If `true` adds `required` attribute
+- `closeAfterSelect` - If `true` the dropdown will be closed after a selection is made.
 
 More info:
 - ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
