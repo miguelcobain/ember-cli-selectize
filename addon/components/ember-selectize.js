@@ -133,7 +133,8 @@ export default Ember.Component.extend({
       onType : Ember.run.bind(this, '_onType'),
       render: get(this, 'renderOptions'),
       placeholder: get(this,'placeholder'),
-      maxItems: get(this, 'maxItems')
+      maxItems: get(this, 'maxItems'),
+      closeAfterSelect: get(this,'closeAfterSelect')
     };
     options = this._mergeSortField(options);
 
