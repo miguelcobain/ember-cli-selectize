@@ -79,34 +79,16 @@ export default Ember.Component.extend({
   viewSuffix : 'View',
   renderOptions: Ember.computed(function(){
     var functionNames = get(this,'functionNames'),
-    templateSuffix = get(this,'templateSuffix'),
-    viewSuffix = get(this,'viewSuffix'),
     //this hash will contain the render functions
     renderFunctions = {};
 
     functionNames.forEach(function(item){
       // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
-      var viewPropertyName = camelize(item)+viewSuffix;
-      var viewToRender = get(this,viewPropertyName);
-
-      var self = this;
-      if(viewToRender){
+      var functionPropertyName = camelize(item) + 'Function';
+      var renderFunction = get(this,functionPropertyName);
+      if(renderFunction){
         // we have a view to render. set the function.
-        renderFunctions[item] = function(data){
-          return self._viewToString(viewToRender,data.data);
-        };
-      } else {
-        // there isn't a view to render. try to get a template.
-        // infer the template name by camelizing selectize's function and appending a template suffix (overridable)
-        var templatePropertyName = camelize(item)+templateSuffix;
-        var templateToRender = get(this,templatePropertyName);
-
-        if(templateToRender){
-          // we have a template to render. set the function.
-          renderFunctions[item] = function(data){
-            return self._templateToString(templateToRender,data.data);
-          };
-        }
+        renderFunctions[item] = renderFunction.bind(this);
       }
     },this);
 
