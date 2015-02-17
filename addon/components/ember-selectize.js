@@ -77,19 +77,21 @@ export default Ember.Component.extend({
   functionNames:['option','item','option_create','optgroup_header','optgroup'],
   templateSuffix : 'Template',
   viewSuffix : 'View',
+  functionSuffix: 'Function',
   renderOptions: Ember.computed(function(){
     var functionNames = get(this,'functionNames'),
     //this hash will contain the render functions
     renderFunctions = {};
 
     functionNames.forEach(function(item){
-      // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
-      var functionPropertyName = camelize(item) + 'Function';
+      // infer the function name by camelizing selectize's function and appending the function suffix (overridable)
+      var functionPropertyName = camelize(item) + functionSuffix;
       var renderFunction = get(this,functionPropertyName);
+      // functions take precedence
       if(renderFunction){
-        // we have a view to render. set the function.
         renderFunctions[item] = renderFunction.bind(this);
       } else {
+        // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
         var templateSuffix = get(this,'templateSuffix'),
         viewSuffix = get(this,'viewSuffix');
         var viewPropertyName = camelize(item)+viewSuffix;
@@ -97,6 +99,7 @@ export default Ember.Component.extend({
 
         var self = this;
         if(viewToRender){
+          // we have a view to render. set the function.
           renderFunctions[item] = function(data){
             return self._viewToString(viewToRender,data.data);
           };
