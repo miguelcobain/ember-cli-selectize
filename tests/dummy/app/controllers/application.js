@@ -1,3 +1,4 @@
+/* global alert */
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
@@ -21,6 +22,9 @@ export default Ember.Controller.extend({
   ],
   names:['Tom','Yehuda','Mike'],
   itemValue:3,
+  getOption: function(item, escape) {
+    return '<div class="hello"><i>' + escape(item.value) + '</i>) ' + escape(item.label) +'</div>';
+  },
   actions:{
     createAction:function(str){
       alert(str);

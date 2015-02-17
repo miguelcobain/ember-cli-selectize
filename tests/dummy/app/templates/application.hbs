@@ -36,3 +36,15 @@
   create="createAction"
   placeholder="Select an item" }}</p>
 <p>Selected: {{itemValues}}</p>
+
+
+<p>{{ember-selectize
+  multiple=true
+  content=controller.items
+  optionValuePath="content.id"
+  optionLabelPath="content.label"
+  value=itemValues
+  create="createAction"
+  optionFunction=getOption
+  placeholder="Select an item" }}</p>
+<p>Selected: {{itemValues}}</p>
