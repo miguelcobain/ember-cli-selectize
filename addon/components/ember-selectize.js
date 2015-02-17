@@ -85,6 +85,7 @@ export default Ember.Component.extend({
 
     functionNames.forEach(function(item){
       // infer the function name by camelizing selectize's function and appending the function suffix (overridable)
+      var functionSuffix = get(this,'functionSuffix');
       var functionPropertyName = camelize(item) + functionSuffix;
       var renderFunction = get(this,functionPropertyName);
       // functions take precedence
@@ -93,7 +94,7 @@ export default Ember.Component.extend({
       } else {
         // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
         var templateSuffix = get(this,'templateSuffix'),
-        viewSuffix = get(this,'viewSuffix');
+          viewSuffix = get(this,'viewSuffix');
         var viewPropertyName = camelize(item)+viewSuffix;
         var viewToRender = get(this,viewPropertyName);
 
