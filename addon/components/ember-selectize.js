@@ -90,7 +90,7 @@ export default Ember.Component.extend({
       var renderFunction = get(this,functionPropertyName);
       // functions take precedence
       if(renderFunction){
-        renderFunctions[item] = renderFunction.bind(this);
+        renderFunctions[item] = renderFunction.bind(this.get('targetObject'));
       } else {
         // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
         var templateSuffix = get(this,'templateSuffix'),
