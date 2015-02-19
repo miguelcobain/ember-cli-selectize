@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-selectize",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "An Ember and Selectize integration, packaged as an Ember-cli addon.",
   "directories": {
     "doc": "doc",
