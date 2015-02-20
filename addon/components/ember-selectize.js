@@ -29,11 +29,11 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: Ember.computed(function(key, value) {
+  value: Ember.computed('selection', function(key, value) {
     if (arguments.length === 2) { return value; }
     var valuePath = get(this, '_valuePath');
     return valuePath ? get(this, 'selection.' + valuePath) : get(this, 'selection');
-  }).property('selection'),
+  }),
 
   /**
   * The array of the default plugins to load into selectize
