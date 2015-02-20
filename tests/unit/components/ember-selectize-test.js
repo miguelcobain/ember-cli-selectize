@@ -16,3 +16,20 @@ test('it renders', function() {
   this.append();
   equal(component._state, 'inDOM');
 });
+
+test('it sends onType action when changing filter', function() {
+  expect(1);
+
+  var testText = 'dummy text';
+  var component = this.subject();
+  var targetObject = {
+    externalAction: function(query) {
+      equal(query, testText, 'externalAction was called with proper argument');
+    }
+  };
+
+  component.set('onType', 'externalAction');
+  component.set('targetObject', targetObject);
+
+  component._onType(testText);
+});
