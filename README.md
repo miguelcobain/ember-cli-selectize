@@ -67,6 +67,11 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `required` - If `true` adds `required` attribute
 - `closeAfterSelect` - If `true` the dropdown will be closed after a selection is made.
 
+### Actions
+
+- `create` - send when the user creates a tag (see create property)
+- `onType` - send when the user types in the input element (see filter property)
+
 More info:
 - ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
 
