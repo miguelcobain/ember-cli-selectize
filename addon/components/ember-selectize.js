@@ -201,6 +201,7 @@ export default Ember.Component.extend({
   */
   _onType: function(str){
     set(this,'filter',str);
+    this.sendAction('onType', str);
   },
   /**
   * Event callback triggered when an item is added (when something is selected)
