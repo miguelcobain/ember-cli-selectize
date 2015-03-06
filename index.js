@@ -11,14 +11,14 @@ module.exports = {
     if(options.theme === 'default'){
       //special case for default theme because `selectize.default.css`
       //includes both core and theme styles
-      app.import('bower_components/selectize/dist/css/selectize.default.css');
+      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.default.css');
     } else if(options.theme){
       //include core styles and `selectize.[theme-name].css`
-      app.import('bower_components/selectize/dist/css/selectize.css');
-      app.import('bower_components/selectize/dist/css/selectize.'+options.theme+'.css');
+      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.css');
+      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.'+options.theme+'.css');
     }
 
     //import javascript
-    app.import('bower_components/selectize/dist/js/standalone/selectize.js');
+    app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
   }
 };
