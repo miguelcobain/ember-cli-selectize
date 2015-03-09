@@ -32,11 +32,17 @@ export default Ember.Component.extend({
   optionValuePath: 'content',
   optionLabelPath: 'content',
 
-  selection: null,
-  value: Ember.computed('selection', function(key, value) {
+  /**
+  * Kept for partial legacy support. Use the main action fired by this
+  * component to keep track of selections ('actions up').
+  */
+  selection: Ember.computed.readOnly('_selection'),
+  _selection: null,
+
+  value: Ember.computed('_selection', function(key, value) {
     if (arguments.length === 2) { return value; }
     var valuePath = get(this, '_valuePath');
-    return valuePath ? get(this, 'selection.' + valuePath) : get(this, 'selection');
+    return valuePath ? get(this, 'selection.' + valuePath) : get(this, '_selection');
   }),
 
   /**
@@ -171,7 +177,7 @@ export default Ember.Component.extend({
     this._disabledDidChange();
     this._contentDidChange();
 
-    var selection = get(this, 'selection');
+    var selection = get(this, '_selection');
     var value = get(this, 'value');
     if (!isNone(selection)) { this._selectionDidChange(); }
     if (!isNone(value)) { this._valueDidChange(); }
@@ -189,6 +195,19 @@ export default Ember.Component.extend({
 
     //We are no longer in DOM
     this.inDOM = false;
+  },
+
+  /**
+  * Update the selection value and send main action
+  */
+  _updateSelection: function(selection) {
+    this.set('_selection', selection);
+
+    // allow the observers and computed properties to run first
+    Ember.run.schedule('actions', this, function() {
+      var value = this.get('value');
+      this.sendAction('action', selection, value);
+    });
   },
 
   /**
@@ -218,7 +237,7 @@ export default Ember.Component.extend({
   */
   _onItemAdd: function(value) {
     var content = get(this,'content');
-    var selection = get(this,'selection');
+    var selection = get(this,'_selection');
     var multiple = get(this,'multiple');
     if(content){
       var obj = content.find(function(item) {
@@ -230,7 +249,7 @@ export default Ember.Component.extend({
         }
       } else if (obj) {
         if(!selection || (get(obj,get(this,'_valuePath')) !== get(selection,get(this,'_valuePath')))) {
-          set(this, 'selection', obj);
+          this._updateSelection(obj);
         }
       }
     }
@@ -246,7 +265,7 @@ export default Ember.Component.extend({
       return;
     }
     var content = get(this,'content');
-    var selection = get(this,'selection');
+    var selection = get(this,'_selection');
     var multiple = get(this,'multiple');
     if (content) {
       var obj = content.find(function(item){
@@ -255,7 +274,7 @@ export default Ember.Component.extend({
       if (multiple && isArray(selection) && obj) {
         selection.removeObject(obj);
       } else if (!multiple) {
-        this.set('selection', null);
+        this._updateSelection(null);
       }
     }
   },
@@ -266,7 +285,7 @@ export default Ember.Component.extend({
   */
   _selectionWillChange: Ember.beforeObserver(function() {
     var multiple = get(this, 'multiple');
-    var selection = get(this, 'selection');
+    var selection = get(this, '_selection');
     if (selection && isArray(selection) && multiple) {
       selection.removeArrayObserver(this,  {
         willChange : 'selectionArrayWillChange',
@@ -275,7 +294,7 @@ export default Ember.Component.extend({
       var len = selection ? get(selection, 'length') : 0;
       this.selectionArrayWillChange(selection, 0, len);
     }
-  }, 'selection'),
+  }, '_selection'),
 
   /**
   * Ember observer triggered when the selection property is changed
@@ -286,13 +305,13 @@ export default Ember.Component.extend({
       return;
     }
     var multiple = get(this, 'multiple');
-    var selection = get(this, 'selection');
+    var selection = get(this, '_selection');
 
     if (multiple) {
       if (selection) {
         if (!isArray(selection)) {
-          selection = Ember.A([selection]);
-          set(this,'selection', selection);
+          var arraySelection = Ember.A([selection]);
+          this._updateSelection(arraySelection);
         } else {
           selection.addArrayObserver(this, {
             willChange : 'selectionArrayWillChange',
@@ -303,26 +322,25 @@ export default Ember.Component.extend({
           this.selectionArrayDidChange(selection, 0, null, len);
         }
       } else {
-        set(this,'selection', []);
+        this._updateSelection([]);
       }
     } else {
       if (selection) {
         this.selectize.addItem(get(selection,get(this,'_valuePath')));
       } else {
-        set(this, 'selection', null);
         if (this.selectize) {
           this.selectize.clear();
           this.selectize.showInput();
         }
       }
     }
-  }, 'selection'),
+  }, '_selection'),
 
   _valueDidChange: Ember.observer('value', function() {
     var content = get(this, 'content');
     var value = get(this, 'value');
     var valuePath = get(this, '_valuePath');
-    var selectedValue = (valuePath ? get(this, 'selection.' + valuePath) : get(this, 'selection'));
+    var selectedValue = (valuePath ? get(this, 'selection.' + valuePath) : get(this, '_selection'));
     var selection;
 
     if (value !== selectedValue) {
@@ -330,7 +348,7 @@ export default Ember.Component.extend({
         return value === (valuePath ? get(obj, valuePath) : obj);
       }) : null;
 
-      this.set('selection', selection);
+      this._updateSelection(selection);
     }
   }),
 
