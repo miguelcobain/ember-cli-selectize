@@ -287,23 +287,24 @@ export default Ember.Component.extend({
     }
     var multiple = get(this, 'multiple');
     var selection = get(this, 'selection');
+
     if (multiple) {
       if (selection) {
         if (!isArray(selection)) {
           selection = Ember.A([selection]);
           set(this,'selection', selection);
-          return;
+        } else {
+          selection.addArrayObserver(this, {
+            willChange : 'selectionArrayWillChange',
+            didChange : 'selectionArrayDidChange'
+          });
+
+          var len = selection ? get(selection, 'length') : 0;
+          this.selectionArrayDidChange(selection, 0, null, len);
         }
-        selection.addArrayObserver(this, {
-          willChange : 'selectionArrayWillChange',
-          didChange : 'selectionArrayDidChange'
-        });
       } else {
         set(this,'selection', []);
-        return;
       }
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayDidChange(selection, 0, null, len);
     } else {
       if (selection) {
         this.selectize.addItem(get(selection,get(this,'_valuePath')));
