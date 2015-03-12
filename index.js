@@ -8,15 +8,7 @@ module.exports = {
     var options = app.options['ember-cli-selectize'] || { theme: 'default' };
 
     //import theme based on options
-    if(options.theme === 'default'){
-      //special case for default theme because `selectize.default.css`
-      //includes both core and theme styles
-      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.default.css');
-    } else if(options.theme){
-      //include core styles and `selectize.[theme-name].css`
-      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.css');
-      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.'+options.theme+'.css');
-    }
+    app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
 
     //import javascript
     app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
