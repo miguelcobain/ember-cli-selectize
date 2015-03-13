@@ -58,7 +58,7 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `maxItems` - If `multiple` is true, you can optionally set this to limit the number of selections.
 - `sortField` - Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
 - `sortDirection` - If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
-- `create` - Pass a string to 'create' property to enable tag creation mode. When active, ember-selectize will send an action with that name to the application when a tag is created. The text is sent as a parameter.
+- `onCreate` - Pass a string to 'onCreate' property to enable tag creation mode. When active, ember-selectize will send an action with that name to the application when a tag is created. The text is sent as a parameter.
 - `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
 - `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
 - `loadingClass` - Customize the loading class name. Default value: `loading`

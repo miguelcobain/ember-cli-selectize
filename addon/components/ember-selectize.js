@@ -191,7 +191,7 @@ export default Ember.Component.extend({
     // Delete user entered text
     this.selectize.setTextboxValue('');
     // Send create action
-    this.sendAction('create',input);
+    this.sendAction('onCreate',input);
     // We cancel the creation here, so it's up to you to include the created element
     // in the content and selection property
     callback(null);
