@@ -119,7 +119,6 @@ export default Ember.Component.extend({
       this.plugins = this.plugins === "" ? [] : this.plugins.split(',').map(function(item){ return item.trim(); });
     }
 
-    //We proxy callbacks through jQuery's 'proxy' to have the callbacks context set to 'this'
     var options = {
       plugins: this.plugins,
       labelField : 'label',
@@ -129,15 +128,15 @@ export default Ember.Component.extend({
       onItemAdd : Ember.run.bind(this, '_onItemAdd'),
       onItemRemove : Ember.run.bind(this, '_onItemRemove'),
       onType : Ember.run.bind(this, '_onType'),
-      render: get(this, 'renderOptions'),
-      placeholder: get(this,'placeholder')
+      render: this.get('renderOptions'),
+      placeholder: this.get('placeholder')
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
                           'createFilter', 'highlight', 'persist', 'openOnFocus',
                           'maxOptions', 'maxItems', 'hideSelected',
                           'closeAfterSelect', 'allowEmptyOption',
-                          'scrollDuration', 'loadThrottle',  'preload',
+                          'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab'];
 
     generalOptions.forEach(Ember.run.bind(this, function (option) {
@@ -255,7 +254,7 @@ export default Ember.Component.extend({
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
       var value = this.get('value');
-      this.sendAction('action', selection, value);
+      this.sendAction('onSelect', selection, value);
     });
   },
   _addSelection: function(obj) {
@@ -559,19 +558,34 @@ export default Ember.Component.extend({
     }
   },'loading'),
 
-  _templateToString: function(template,data) {
-    //create a view with a template
+  _templateToString: function(templateName,data) {
+    var template = this.container.lookup('template:'+templateName);
+
+    if (!template) {
+      throw new TypeError('template '+templateName+' does not exist.');
+    }
+
+    var controller = Ember.Controller.create(Ember.typeOf(data) === 'instance' ? data : {data: data});
     var view = this.createChildView(Ember.View, {
-      templateName: template,
-      context:data
+      template: template,
+      controller: controller,
+      container: this.get('container')
     });
+
     return this._getStringFromView(view);
   },
   _viewToString: function(viewName,data) {
-    //create a view with the given name
-    var view = this.createChildView(viewName, {
-      context:data
+    var viewClass = this.container.lookup('view:'+viewName);
+
+    if (!viewClass) {
+      throw new TypeError('view '+viewName+' does not exist.');
+    }
+
+    var controller = Ember.Controller.create(Ember.typeOf(data) === 'instance' ? data : {data: data});
+    var view = this.createChildView(viewClass, {
+      controller: controller
     });
+
     return this._getStringFromView(view);
   },
   /*
@@ -580,9 +594,8 @@ export default Ember.Component.extend({
   //FIX ME: this method does not work in Ember 1.8.0
   //see http://git.io/VUYZ4g for more info
   _getStringFromView: function(view){
-    var buffer = new Ember.RenderBuffer();
-    view.renderToBuffer(buffer);
-    return buffer.string();
+    view.createElement();
+    return view.element.outerHTML;
   },
 
   _mergeSortField: function(options){

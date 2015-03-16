@@ -305,7 +305,7 @@ test('it sends onCreate action when an item is created in selectize', function(a
   component._create(testText, function(){});
 });
 
-test('it sends main action when an item is selected', function(assert) {
+test('it sends onSelect action when an item is selected', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -318,7 +318,7 @@ test('it sends main action when an item is selected', function(assert) {
 
   Ember.run(function() {
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('action', 'externalAction');
+    component.set('onSelect', 'externalAction');
     component.set('targetObject', targetObject);
   });
 
@@ -329,7 +329,7 @@ test('it sends main action when an item is selected', function(assert) {
   });
 });
 
-test('it sends main action when an item is deselected', function(assert) {
+test('it sends onSelect action when an item is deselected', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -343,7 +343,7 @@ test('it sends main action when an item is deselected', function(assert) {
   Ember.run(function() {
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
     component.set('selection', 'item 1');
-    component.set('action', 'externalAction');
+    component.set('onSelect', 'externalAction');
     component.set('targetObject', targetObject);
   });
 

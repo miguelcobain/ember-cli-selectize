@@ -48,3 +48,11 @@
   optionFunction=getOption
   placeholder="Select an item" }}</p>
 <p>Selected: {{itemValues}}</p>
+
+<p>{{ember-selectize
+  content=controller.items
+  optionValuePath="content.id"
+  optionLabelPath="content.label"
+  selection=item
+  optionTemplate="test"
+  placeholder="Select an item" }}</p>
