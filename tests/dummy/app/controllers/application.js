@@ -26,11 +26,17 @@ export default Ember.Controller.extend({
     return '<div class="hello"><i>' + escape(item.value) + '</i>) ' + escape(item.label) +'</div>';
   },
   actions:{
-    createAction:function(str){
+    createAction:function(str) {
       alert(str);
     },
-    selectItem:function(v){
+    selectItem:function(v) {
       this.set('itemValue',v);
+    },
+    itemSelected: function(selection, value) {
+      console.log("Item selected `" + Ember.inspect(selection) + "` (" + value + ")");
+    },
+    nameSelected: function(selection, value) {
+      console.log("Name selected `" + Ember.inspect(selection) + "` (" + value + ")");
     }
   }
 });
