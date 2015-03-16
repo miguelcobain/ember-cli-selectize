@@ -59,14 +59,14 @@ test('placeholder is passed to selectize', function(assert) {
   assert.equal(component._selectize.settings.placeholder, 'some placeholder here');
 });
 
-var exampleObjectContent = function(){
+var exampleObjectContent = function() {
   return [{
       id: 1,
       label: 'item 1'
-    },{
+    }, {
       id: 2,
       label: 'item 2'
-    },{
+    }, {
       id: 3,
       label: 'item 3'
     }
@@ -74,7 +74,7 @@ var exampleObjectContent = function(){
 };
 
 var objectSize = function(obj) {
-  var size = 0, key;
+  var size = 0; var key;
   for (key in obj) {
     if (obj.hasOwnProperty(key)) size++;
   }
@@ -82,10 +82,10 @@ var objectSize = function(obj) {
 };
 
 var asArray = function(obj, path) {
-  var key, values = [];
+  var key; var values = [];
   for (key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if(path){
+      if (path) {
         values.push(obj[key][path]);
       } else {
         values.push(obj[key]);
@@ -96,7 +96,7 @@ var asArray = function(obj, path) {
 };
 
 var keysToArray = function(obj) {
-  var key, keys = [];
+  var key; var keys = [];
   for (key in obj) {
     if (obj.hasOwnProperty(key)) {
       keys.push(key);
@@ -305,7 +305,7 @@ test('it sends create action when an item is created in selectize', function(ass
   component.set('targetObject', targetObject);
 
   Ember.run(function() {
-    component._create(testText, function(){});
+    component._create(testText, function() {});
   });
 });
 
