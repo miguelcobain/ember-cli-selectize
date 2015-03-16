@@ -142,10 +142,20 @@ export default Ember.Component.extend({
       onItemRemove : Ember.run.bind(this, '_onItemRemove'),
       onType : Ember.run.bind(this, '_onType'),
       render: get(this, 'renderOptions'),
-      placeholder: get(this,'placeholder'),
-      maxItems: get(this, 'maxItems'),
-      closeAfterSelect: get(this,'closeAfterSelect')
+      placeholder: get(this,'placeholder')
     };
+
+    var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
+                          'createFilter', 'highlight', 'persist', 'openOnFocus',
+                          'maxOptions', 'maxItems', 'hideSelected',
+                          'closeAfterSelect', 'allowEmptyOption',
+                          'scrollDuration', 'loadThrottle',  'preload',
+                          'dropdownParent', 'addPrecedence', 'selectOnTab'];
+
+    generalOptions.forEach(Ember.run.bind(this, function (option) {
+      options[option] = get(this, option);
+    }));
+
     options = this._mergeSortField(options);
 
     return options;

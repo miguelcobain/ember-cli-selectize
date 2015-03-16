@@ -55,17 +55,16 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `placeholder` or `prompt` - Set any of these to display a text when there is no choice made. Example `"Please select an- option"`
 - `disabled` - If `true` disables changes in selectize
 - `multiple` - If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
-- `maxItems` - If `multiple` is true, you can optionally set this to limit the number of selections.
 - `sortField` - Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
 - `sortDirection` - If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
 - `create` - Pass a string to 'create' property to enable tag creation mode. When active, ember-selectize will send an action with that name to the application when a tag is created. The text is sent as a parameter.
 - `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
 - `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
-- `loadingClass` - Customize the loading class name. Default value: `loading`
 - `optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction`  - Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.
 - `optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` - Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
 - `required` - If `true` adds `required` attribute
-- `closeAfterSelect` - If `true` the dropdown will be closed after a selection is made.
+
+ember-selectize also supports [selectize's general options](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md#general), excluding `options` and `items` (equivalent to `content` and `selection` respectively).
 
 ### Actions
 
