@@ -12,23 +12,9 @@ Should run wherever Ember and Selectize run.
 
 ## Installation
 
-### As an Ember CLI addon (0.1.5 or later)
+### As an Ember CLI addon
 
 Run `ember install:addon ember-cli-selectize` on your project folder.
-
-### As an Ember CLI addon (prior to 0.1.5)
-
-Run `npm install --save-dev ember-cli-selectize` on your project folder.
-
-Run `ember g ember-cli-selectize` to install selectize dependency from bower.
-
-### As a Standalone Library
-
-Download a [release][releases].
-
-[releases]: https://github.com/miguelcobain/ember-cli-selectize/releases
-
-Copy to your vendor directory and link up the .js file.
 
 ## Usage
 
@@ -58,7 +44,6 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 - `maxItems` - If `multiple` is true, you can optionally set this to limit the number of selections.
 - `sortField` - Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
 - `sortDirection` - If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
-- `onCreate` - Pass a string to 'onCreate' property to enable tag creation mode. When active, ember-selectize will send an action with that name to the application when a tag is created. The text is sent as a parameter.
 - `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
 - `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
 - `loadingClass` - Customize the loading class name. Default value: `loading`
@@ -69,8 +54,15 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 
 ### Actions
 
-- `create` - sent when the user creates a tag (see `create` property)
-- `onType` - sent when the user types in the input element (see `filter` property)
+Ember is moving towards a paradigm that encourages the use of actions. With this in mind, ember selectize provides a set of actions. The goal is to not use two way data bindings, that is, you pass the data to your components, but the components send actions up to let you (and only you) change the data. Here are the actions the ember selectize supports:
+
+- `onCreate` - sent when the user creates a tag. The text is sent as a parameter.
+- `onType` - sent when the user types in the input element (functional equivalent of observing `filter` property)
+- `onSelect` - sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
+- `onAdd` - sent when the user selects an item in multiple mode. The added object is sent as a parameter.
+- `onRemove` - sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
+
+Ember selectize supports both APIs.
 
 More info:
 - ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
