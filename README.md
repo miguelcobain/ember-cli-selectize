@@ -55,11 +55,11 @@ ember-selectize also supports [selectize's general options](https://github.com/b
 
 Ember is moving towards a paradigm that encourages the use of actions. With this in mind, ember selectize provides a set of actions. The goal is to not use two way data bindings, that is, you pass the data to your components, but the components send actions up to let you (and only you) change the data. Here are the actions the ember selectize supports:
 
-- `onCreate` - sent when the user creates a tag. The text is sent as a parameter.
-- `onType` - sent when the user types in the input element (functional equivalent of observing `filter` property)
-- `onSelect` - sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
-- `onAdd` - sent when the user selects an item in multiple mode. The added object is sent as a parameter.
-- `onRemove` - sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
+- `create` - sent when the user creates a tag. The text is sent as a parameter.
+- `type` - sent when the user types in the input element (functional equivalent of observing `filter` property)
+- `select` - sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
+- `add` - sent when the user selects an item in multiple mode. The added object is sent as a parameter.
+- `remove` - sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
 
 Ember selectize supports both APIs.
 
