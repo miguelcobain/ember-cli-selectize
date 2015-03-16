@@ -97,11 +97,7 @@ If you don't want to include any css at all for some reason, simply assign `fals
 * `ember test`
 * `ember test --server`
 
-Tests are written in qunit, and some were borrowed from `Ember.Select`.
-
-I've rewritten many of them, but most of them still fail.
-
-This is due to the nature of this component. `Selectize`'s tests assures that everything is ok between Selectize<->DOM.
+`Selectize`'s tests assures that everything is ok between Selectize<->DOM.
 `Ember.Select`'s tests also test the DOM. This is unecessary in this project.
 
 Ember-selectize tests should be focused between Ember<->Selectize.
