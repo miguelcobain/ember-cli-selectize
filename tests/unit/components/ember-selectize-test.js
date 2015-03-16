@@ -271,7 +271,7 @@ test('adding a multiple selection updates selectize selection', function(assert)
   assert.deepEqual(component._selectize.items, ['item 2', 'item 3', 'item 4']);
 });
 
-test('it sends onType action when changing filter', function(assert) {
+test('it sends type action when changing filter', function(assert) {
   assert.expect(1);
 
   var testText = 'dummy text';
@@ -282,13 +282,15 @@ test('it sends onType action when changing filter', function(assert) {
     }
   };
 
-  component.set('onType', 'externalAction');
+  component.set('type', 'externalAction');
   component.set('targetObject', targetObject);
 
-  component._onType(testText);
+  Ember.run(function() {
+    component._onType(testText);
+  });
 });
 
-test('it sends onCreate action when an item is created in selectize', function(assert) {
+test('it sends create action when an item is created in selectize', function(assert) {
   assert.expect(1);
 
   var testText = 'dummy text';
@@ -299,13 +301,15 @@ test('it sends onCreate action when an item is created in selectize', function(a
     }
   };
   this.render();
-  component.set('onCreate', 'externalAction');
+  component.set('create', 'externalAction');
   component.set('targetObject', targetObject);
 
-  component._create(testText, function(){});
+  Ember.run(function() {
+    component._create(testText, function(){});
+  });
 });
 
-test('it sends onSelect action when an item is selected', function(assert) {
+test('it sends select action when an item is selected', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -318,7 +322,7 @@ test('it sends onSelect action when an item is selected', function(assert) {
 
   Ember.run(function() {
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('onSelect', 'externalAction');
+    component.set('select', 'externalAction');
     component.set('targetObject', targetObject);
   });
 
@@ -329,7 +333,7 @@ test('it sends onSelect action when an item is selected', function(assert) {
   });
 });
 
-test('it sends onSelect action when an item is deselected', function(assert) {
+test('it sends select action when an item is deselected', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -343,7 +347,7 @@ test('it sends onSelect action when an item is deselected', function(assert) {
   Ember.run(function() {
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
     component.set('selection', 'item 1');
-    component.set('onSelect', 'externalAction');
+    component.set('select', 'externalAction');
     component.set('targetObject', targetObject);
   });
 
@@ -354,7 +358,7 @@ test('it sends onSelect action when an item is deselected', function(assert) {
   });
 });
 
-test('it sends onAdd action when an item is selected in multiple mode', function(assert) {
+test('it sends add action when an item is selected in multiple mode', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -369,7 +373,7 @@ test('it sends onAdd action when an item is selected in multiple mode', function
     component.set('multiple', true);
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
     component.set('selection', ['item 2']);
-    component.set('onAdd', 'externalAction');
+    component.set('add', 'externalAction');
     component.set('targetObject', targetObject);
   });
 
@@ -380,7 +384,7 @@ test('it sends onAdd action when an item is selected in multiple mode', function
   });
 });
 
-test('it sends onRemove action when an item is deselected in multiple mode', function(assert) {
+test('it sends remove action when an item is deselected in multiple mode', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -395,7 +399,7 @@ test('it sends onRemove action when an item is deselected in multiple mode', fun
     component.set('multiple', true);
     component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
     component.set('selection', ['item 2']);
-    component.set('onRemove', 'externalAction');
+    component.set('remove', 'externalAction');
     component.set('targetObject', targetObject);
   });
 
