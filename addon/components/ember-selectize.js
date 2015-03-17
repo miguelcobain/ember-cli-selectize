@@ -112,7 +112,7 @@ export default Ember.Component.extend({
   }),
 
   selectizeOptions: Ember.computed(function() {
-    var allowCreate = this.get('create');
+    var allowCreate = this.get('create-item');
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
@@ -188,7 +188,7 @@ export default Ember.Component.extend({
 
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
-      this.sendAction('create', input);
+      this.sendAction('create-item', input);
     });
     // We cancel the creation here, so it's up to you to include the created element
     // in the content and selection property
@@ -200,7 +200,7 @@ export default Ember.Component.extend({
   _onType: function(str) {
     this.set('filter', str);
     Ember.run.schedule('actions', this, function() {
-      this.sendAction('type', str);
+      this.sendAction('update-filter', str);
     });
   },
   /**
@@ -260,21 +260,21 @@ export default Ember.Component.extend({
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
       var value = this.get('value');
-      this.sendAction('select', selection, value);
+      this.sendAction('select-item', selection, value);
     });
   },
   _addSelection: function(obj) {
     this.get('selection').addObject(obj);
 
     Ember.run.schedule('actions', this, function() {
-      this.sendAction('add', obj);
+      this.sendAction('add-item', obj);
     });
   },
   _removeSelection: function(obj) {
     this.get('selection').removeObject(obj);
 
     Ember.run.schedule('actions', this, function() {
-      this.sendAction('remove', obj);
+      this.sendAction('remove-item', obj);
     });
   },
   /**
