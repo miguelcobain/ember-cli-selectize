@@ -60,16 +60,16 @@ test('placeholder is passed to selectize', function(assert) {
 });
 
 var exampleObjectContent = function() {
-  return [{
+  return [Ember.Object.create({
       id: 1,
       label: 'item 1'
-    }, {
+    }), Ember.Object.create({
       id: 2,
       label: 'item 2'
-    }, {
+    }), Ember.Object.create({
       id: 3,
       label: 'item 3'
-    }
+    })
   ];
 };
 
@@ -152,6 +152,25 @@ test('optionLabelPath passes selectize the desired label', function(assert) {
   });
   this.render();
   assert.deepEqual(asArray(component._selectize.options, 'label'), asArray(exampleObjectContent(), 'label'));
+});
+
+test('selectize labels are updated', function(assert) {
+  var component = this.subject();
+  var content = exampleObjectContent();
+  Ember.run(function() {
+    component.set('content', content);
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'label');
+  });
+  this.render();
+  assert.deepEqual(asArray(component._selectize.options, 'label'), asArray(exampleObjectContent(), 'label'));
+
+  Ember.run(function() {
+    content.objectAt(0).set('label', 'another label');
+  });
+
+  assert.equal(asArray(component._selectize.options, 'label')[0], 'another label');
+
 });
 
 test('adding to content updates selectize options', function(assert) {
@@ -408,4 +427,15 @@ test('it sends remove-item action when an item is deselected in multiple mode', 
   Ember.run(function() {
     component._onItemRemove('item 2');
   });
+});
+
+test('if label is falsy, pass an empty string as a value', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('content', exampleObjectContent());
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'unknownLabel');
+  });
+  this.render();
+  assert.deepEqual(asArray(component._selectize.options, 'label'), ['', '', '']);
 });

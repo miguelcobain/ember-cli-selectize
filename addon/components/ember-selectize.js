@@ -474,7 +474,7 @@ export default Ember.Component.extend({
     var sortField = this.get('sortField');
     if (typeOf(obj) === 'object' || typeOf(obj) === 'instance') {
       data = {
-        label: get(obj, this.get('_labelPath')),
+        label: get(obj, this.get('_labelPath')) || '',
         value: get(obj, this.get('_valuePath')),
         data: obj
       };
@@ -524,7 +524,7 @@ export default Ember.Component.extend({
   _labelDidChange: function(sender) {
     if (!this._selectize) { return; }
     var data = {
-      label: get(sender, this.get('_labelPath')),
+      label: get(sender, this.get('_labelPath')) || '',
       value: get(sender, this.get('_valuePath')),
       data: sender
     };
