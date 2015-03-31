@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+import computed from 'ember-new-computed';
 var get = Ember.get, isArray = Ember.isArray, typeOf = Ember.typeOf,
   isNone = Ember.isNone, camelize = Ember.String.camelize;
 
@@ -29,11 +29,10 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: Ember.computed('selection', function(key, value) {
-    if (arguments.length === 2) { return value; }
+  value: computed('selection', {get: function() {
     var valuePath = this.get('_valuePath');
     return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
-  }),
+  }, set: function(key, value){ return value; }}),
 
   /**
   * The array of the default plugins to load into selectize
@@ -44,10 +43,10 @@ export default Ember.Component.extend({
   * Computed properties that hold the processed paths ('content.' replacement),
   * as it is done on Ember.Select
   */
-  _valuePath: Ember.computed('optionValuePath', function() {
+  _valuePath: computed('optionValuePath', function() {
     return this.get('optionValuePath').replace(/^content\.?/, '');
   }),
-  _labelPath: Ember.computed('optionLabelPath', function() {
+  _labelPath: computed('optionLabelPath', function() {
     return this.get('optionLabelPath').replace(/^content\.?/, '');
   }),
 
@@ -66,7 +65,7 @@ export default Ember.Component.extend({
   templateSuffix: 'Template',
   viewSuffix: 'View',
   functionSuffix: 'Function',
-  renderOptions: Ember.computed(function() {
+  renderOptions: computed(function() {
     var functionNames = this.get('functionNames');
     //this hash will contain the render functions
     var renderFunctions = {};
@@ -111,7 +110,7 @@ export default Ember.Component.extend({
     return renderFunctions;
   }),
 
-  selectizeOptions: Ember.computed(function() {
+  selectizeOptions: computed(function() {
     var allowCreate = this.get('create-item');
 
     //Split the passed in plugin config into an array.
