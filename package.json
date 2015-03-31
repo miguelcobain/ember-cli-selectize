@@ -34,7 +34,8 @@
     "ember-export-application-global": "^1.0.2"
   },
   "dependencies": {
-    "ember-cli-babel": "^4.0.0"
+    "ember-cli-babel": "^4.0.0",
+    "ember-new-computed": "^1.0.0"
   },
   "keywords": [
     "ember-addon",
