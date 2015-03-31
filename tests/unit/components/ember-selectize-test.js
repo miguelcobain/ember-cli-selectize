@@ -429,7 +429,7 @@ test('it sends remove-item action when an item is deselected in multiple mode', 
   });
 });
 
-test('if label is falsy, pass an empty string as a value', function(assert) {
+test('if label is falsy, don\'t add item', function(assert) {
   var component = this.subject();
   Ember.run(function() {
     component.set('content', exampleObjectContent());
@@ -437,5 +437,26 @@ test('if label is falsy, pass an empty string as a value', function(assert) {
     component.set('optionLabelPath', 'unknownLabel');
   });
   this.render();
-  assert.deepEqual(asArray(component._selectize.options, 'label'), ['', '', '']);
+  assert.deepEqual(asArray(component._selectize.options, 'label'), []);
+});
+
+test('if label is falsy, don\'t add item, but add it once label updates', function(assert) {
+  var component = this.subject();
+  var content = exampleObjectContent();
+  Ember.run(function() {
+    component.set('content', content);
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'unknownLabel');
+  });
+  this.render();
+
+  assert.deepEqual(asArray(component._selectize.options, 'label'), []);
+
+  Ember.run(function() {
+    content.forEach(function(item, index) {
+      item.set('unknownLabel', 'item '+(index+1));
+    });
+  });
+
+  assert.deepEqual(asArray(component._selectize.options, 'label'), ['item 1', 'item 2', 'item 3']);
 });

@@ -453,7 +453,8 @@ export default Ember.Component.extend({
   */
   contentArrayDidChange: function(array, idx, removedCount, addedCount) {
     for (var i = idx; i < idx + addedCount; i++) {
-      this.objectWasAdded(array.objectAt(i), i);
+      this.objectWasAdded(array.objectAt(i));
+      this.addLabelObserver(array.objectAt(i));
     }
 
     if (this._selectize) {
@@ -471,9 +472,10 @@ export default Ember.Component.extend({
   objectWasAdded: function(obj) {
     var data = {};
     var sortField = this.get('sortField');
+
     if (typeOf(obj) === 'object' || typeOf(obj) === 'instance') {
       data = {
-        label: get(obj, this.get('_labelPath')) || '',
+        label: get(obj, this.get('_labelPath')),
         value: get(obj, this.get('_valuePath')),
         data: obj
       };
@@ -488,7 +490,6 @@ export default Ember.Component.extend({
         }
       }
 
-      Ember.addObserver(obj, this.get('_labelPath'), this, '_labelDidChange');
     } else {
       data = {
         label: obj,
@@ -501,8 +502,14 @@ export default Ember.Component.extend({
       }
     }
 
-    if (this._selectize) {
+    if (this._selectize && data.label) {
       this._selectize.addOption(data);
+    }
+  },
+  addLabelObserver: function(obj) {
+    //Only attach observer if the label is a property of an object
+    if (typeOf(obj) === 'object' || typeOf(obj) === 'instance') {
+      Ember.addObserver(obj, this.get('_labelPath'), this, '_labelDidChange');
     }
   },
   /*
@@ -523,11 +530,16 @@ export default Ember.Component.extend({
   _labelDidChange: function(sender) {
     if (!this._selectize) { return; }
     var data = {
-      label: get(sender, this.get('_labelPath')) || '',
+      label: get(sender, this.get('_labelPath')),
       value: get(sender, this.get('_valuePath')),
       data: sender
     };
-    this._selectize.updateOption(data.value, data);
+
+    if(this._selectize.getOption(data.value).length !== 0) {
+      this._selectize.updateOption(data.value, data);
+    } else {
+      this.objectWasAdded(sender);
+    }
   },
   /*
   * Observer on the disabled property that enables or disables selectize.
