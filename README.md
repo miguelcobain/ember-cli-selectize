@@ -14,7 +14,19 @@ Should run wherever Ember and Selectize run.
 
 ### As an Ember CLI addon
 
-Run `ember install:addon ember-cli-selectize` on your project folder.
+Run either command below depending on Ember version in your project folder.
+
+For Ember CLI >= `0.2.3`:
+
+```shell
+ember install ember-cli-selectize
+```
+
+For Ember CLI < `0.2.3`:
+
+```shell
+ember install:addon ember-cli-selectize
+```
 
 ## Usage
 
