@@ -56,3 +56,13 @@
   selection=item
   optionTemplate="test"
   placeholder="Select an item" }}</p>
+
+<p class='tagged-selectize'>{{ember-selectize
+      persist=false
+      multiple=true
+      content=taggedContent
+      selection=taggedValues
+      delimiter=','
+      create-item='createTag'}}
+  </p>
+

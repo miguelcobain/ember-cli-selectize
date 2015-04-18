@@ -21,6 +21,8 @@ export default Ember.Controller.extend({
     })
   ],
   names:['Tom','Yehuda','Mike'],
+  taggedContent: [],
+  taggedValues: [],
   itemValue:3,
   getOption: function(item, escape) {
     return '<div class="hello"><i>' + escape(item.value) + '</i>) ' + escape(item.label) +'</div>';
@@ -31,6 +33,11 @@ export default Ember.Controller.extend({
     },
     selectItem:function(v){
       this.set('itemValue',v);
+    },
+
+    createTag: function (input) {
+      this.get('taggedContent').addObject(input);
+      this.get('taggedValues').addObject(input);
     }
   }
 });
