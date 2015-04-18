@@ -24,6 +24,9 @@ export default Ember.Controller.extend({
   taggedContent: [],
   taggedValues: [],
   itemValue:3,
+  taggedValuesString: Ember.computed('taggedValues.[]', function () {
+    return this.get('taggedValues').join(', ');
+  }),
   getOption: function(item, escape) {
     return '<div class="hello"><i>' + escape(item.value) + '</i>) ' + escape(item.label) +'</div>';
   },
