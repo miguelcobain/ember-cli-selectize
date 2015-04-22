@@ -290,6 +290,52 @@ test('adding a multiple selection updates selectize selection', function(assert)
   assert.deepEqual(component._selectize.items, ['item 2', 'item 3', 'item 4']);
 });
 
+test('adding a multiple selection updates component selection from optionValuePath', function(assert) {
+  var component = this.subject();
+  var item1 = { label: 'label 1', value: 'value 1' };
+  var item2 = { label: 'label 2', value: 'value 2' };
+  var item3 = { label: 'label 3', value: 'value 3' };
+  var item4 = { label: 'label 4', value: 'value 4' };
+
+  Ember.run(function() {
+    component.set('content', [item1, item2, item3, item4]);
+    component.set('selection', [item2.value, item3.value]);
+    component.set('multiple', true);
+    component.set('optionValuePath', 'content.value');
+    component.set('optionLabelPath', 'content.label');
+  });
+  this.render();
+  assert.deepEqual(component.get('selection').length, 2);
+  assert.deepEqual(component.get('selection'), [item2.value, item3.value]);
+  Ember.run(function() {
+    component.get('selection').pushObject(item4.value);
+  });
+  assert.deepEqual(component.get('selection').length, 3);
+  assert.deepEqual(component.get('selection'), [item2.value, item3.value, item4.value]);
+});
+
+test('removing a multiple selection updates component selection from optionValuePath', function(assert) {
+  var component = this.subject();
+  var item1 = { label: 'label 1', value: 'value 1' };
+  var item2 = { label: 'label 2', value: 'value 2' };
+
+  Ember.run(function() {
+    component.set('content', [item1, item2]);
+    component.set('selection', [item1.value, item2.value]);
+    component.set('multiple', true);
+    component.set('optionValuePath', 'content.value');
+    component.set('optionLabelPath', 'content.label');
+  });
+  this.render();
+  assert.deepEqual(component.get('selection').length, 2);
+  assert.deepEqual(component.get('selection'), [item1.value, item2.value]);
+  Ember.run(function() {
+    component.get('selection').removeObject(item2.value);
+  });
+  assert.deepEqual(component.get('selection').length, 1);
+  assert.deepEqual(component.get('selection'), [item1.value]);
+});
+
 test('it sends update-filter action when changing filter', function(assert) {
   assert.expect(1);
 
