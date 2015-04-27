@@ -363,7 +363,11 @@ export default Ember.Component.extend({
   selectionArrayWillChange: function(array, idx, removedCount) {
     this._removing = true;
     for (var i = idx; i < idx + removedCount; i++) {
-      this.selectionObjectWasRemoved(array.objectAt(i));
+      var obj = array.objectAt(i);
+      if (obj.isError) {
+        continue;
+      }
+      this.selectionObjectWasRemoved(obj);
     }
     this._removing = false;
   },
