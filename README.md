@@ -103,21 +103,18 @@ Its usage should be very similar to `Ember.Select`, but with additional features
   </tr>
   <tr>
     <td valign="top">
-      <code>optionFunction</code>, <code>itemFunction</code>,<br>
-      <code>optionCreateFunction</code>, <code>optgroupHeaderFunction</code>,<br>
-      <code>optgroupFunction</code>
+      <code>optionFunction</code>, <code>itemFunction</code>, <code>optionCreateFunction</code>, <code>optgroupHeaderFunction</code>, <code>optgroupFunction</code>
     </td>
     <td valign="top">Will be called on the component with two parameters <code>data</code> and <code>escape</code>. <code>escape</code> is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their <code>Template</code> and <code>View</code> counterparts.</td>
   </tr>
   <tr>
     <td valign="top">
-      <code>optionTemplate</code>,<code>itemTemplate</code>,<br>
-      <code>optionCreateTemplate</code>,<br><code>optgroupHeaderTemplate</code>,<br>
-      <code>optgroupTemplate</code><br> <code>optionView</code>,<code>itemView</code>,<br>
-      <code>optionCreateView</code>,<code>optgroupHeaderView</code><br>
+      <code>optionTemplate</code>, <code>itemTemplate</code>, <code>optionCreateTemplate</code>, <code>optgroupHeaderTemplate</code>,
+      <code>optgroupTemplate</code><br> <code>optionView</code>, <code>itemView</code>,
+      <code>optionCreateView</code>, <code>optgroupHeaderView</code>
       and <code>optgroupView</code>
     </td>
-    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check <a href="https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784">this issue</a>.</td>
+    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting <code>optionView</code> and <code>optionTemplate</code>, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check <a href="https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784">this issue</a>.</td>
   </tr>
   <tr>
     <td valign="top"><code>required</code></td>
@@ -133,7 +130,7 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
 
 <table width="100%">
   <tr>
-  	<th valign="top" width="120px" align="left">Action</th>
+  	<th valign="top" width="160px" align="left">Action</th>
   	<th valign="top" align="left">Description</th>
   </tr>
   <tr>
