@@ -50,68 +50,78 @@ Its usage should be very similar to `Ember.Select`, but with additional features
   	<th valign="top" align="left">Description</th>
   </tr>
   <tr>
-    <td valign="top">`content`</td>
+    <td valign="top"><code>content</code></td>
     <td valign="top">Array containing all the options to select from</td>
   </tr>
   <tr>
-    <td valign="top">`selection`</td>
-    <td valign="top">Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.</td>
+    <td valign="top"><code>selection</code></td>
+    <td valign="top">Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If <code>multiple</code> is <code>true</code>, then it should be an array.</td>
   </tr>
   <tr>
-    <td valign="top">`value`</td>
+    <td valign="top"><code>value</code></td>
     <td valign="top">Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.</td>
   </tr>
   <tr>
-    <td valign="top">`optionValuePath`</td>
-    <td valign="top">Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`</td>
+    <td valign="top"><code>optionValuePath</code></td>
+    <td valign="top">Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with <code>content.</code>. Example: <code>content.id</code></td>
   </tr>
   <tr>
-    <td valign="top">`optionLabelPath`</td>
-    <td valign="top">Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: `content.name`</td>
+    <td valign="top"><code>optionLabelPath</code></td>
+    <td valign="top">Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: <code>content.name</code></td>
   </tr>
   <tr>
-    <td valign="top">`plugins`</td>
-    <td valign="top">Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`</td>
+    <td valign="top"><code>plugins</code></td>
+    <td valign="top">Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: <code>restore_on_backspace,drag_drop</code></td>
   </tr>
   <tr>
-    <td valign="top">`placeholder` or `prompt`</td>
-    <td valign="top">Set any of these to display a text when there is no choice made. Example `"Please select an option"`</td>
+    <td valign="top"><code>placeholder</code> or <code>prompt</code></td>
+    <td valign="top">Set any of these to display a text when there is no choice made. Example <code>"Please select an option"</code></td>
   </tr>
   <tr>
-    <td valign="top">`disabled`</td>
-    <td valign="top">If `true` disables changes in selectize</td>
+    <td valign="top"><code>disabled</code></td>
+    <td valign="top">If <code>true</code> disables changes in selectize</td>
   </tr>
   <tr>
-    <td valign="top">`multiple`</td>
-    <td valign="top">If `true` ember-selectize will enter multiple mode. `selection` is an array of options.</td>
+    <td valign="top"><code>multiple</code></td>
+    <td valign="top">If <code>true</code> ember-selectize will enter multiple mode. <code>selection</code> is an array of options.</td>
   </tr>
   <tr>
-    <td valign="top">`sortField`</td>
-    <td valign="top">Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`</td>
+    <td valign="top"><code>sortField</code></td>
+    <td valign="top">Pass a string of a property to sort by. You can also pass an array of objects <code>[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]</code>. See <a href="https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md">selectize usage</a> for details. Example: <code>"name"</code></td>
   </tr>
   <tr>
-    <td valign="top">`sortDirection`</td>
-    <td valign="top">If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).</td>
+    <td valign="top"><code>sortDirection</code></td>
+    <td valign="top">If <code>sortField</code> is a string, specify the direction. Example: <code>"asc"</code> or <code>"desc"</code>. This is ignored if <code>sortField</code> is an array (you can specify direction inside that array).</td>
   </tr>
   <tr>
-    <td valign="top">`filter`</td>
+    <td valign="top"><code>filter</code></td>
     <td valign="top">This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.</td>
   </tr>
   <tr>
-    <td valign="top">`loading`</td>
-    <td valign="top">When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.</td>
+    <td valign="top"><code>loading</code></td>
+    <td valign="top">When <code>true</code> ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: <code>loading=types.isPending</code>.</td>
   </tr>
   <tr>
-    <td valign="top">`optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction` </td>
-    <td valign="top">Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.</td>
+    <td valign="top">
+      <code>optionFunction</code>, <code>itemFunction</code>,<br>
+      <code>optionCreateFunction</code>, <code>optgroupHeaderFunction</code>,<br>
+      <code>optgroupFunction</code>
+    </td>
+    <td valign="top">Will be called on the component with two parameters <code>data</code> and <code>escape</code>. <code>escape</code> is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their <code>Template</code> and <code>View</code> counterparts.</td>
   </tr>
   <tr>
-    <td valign="top">`optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView`</td>
-    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).</td>
+    <td valign="top">
+      <code>optionTemplate</code>,<code>itemTemplate</code>,<br>
+      <code>optionCreateTemplate</code>,<br><code>optgroupHeaderTemplate</code>,<br>
+      <code>optgroupTemplate</code><br> <code>optionView</code>,<code>itemView</code>,<br>
+      <code>optionCreateView</code>,<code>optgroupHeaderView</code><br>
+      and <code>optgroupView</code>
+    </td>
+    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check <a href="https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784">this issue</a>.</td>
   </tr>
   <tr>
-    <td valign="top">`required`</td>
-    <td valign="top">If `true` adds `required` attribute</tr>
+    <td valign="top"><code>required</code></td>
+    <td valign="top">If <code>true</code> adds <code>required</code> attribute</td>
   </tr>
 </table>
 
@@ -121,13 +131,32 @@ ember-selectize also supports [selectize's general options](https://github.com/b
 
 Ember is moving towards a paradigm that encourages the use of actions. With this in mind, ember selectize provides a set of actions. The goal is to not use two way data bindings, that is, you pass the data to your components, but the components send actions up to let you (and only you) change the data. Here are the actions the ember selectize supports:
 
-Action | Description
--|-
-`create-item` | sent when the user creates a tag. The text is sent as a parameter.
-`update-filter` | sent when the user types in the input element (functional equivalent of observing `filter` property)
-`select-item` | sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
-`add-item` | sent when the user selects an item in multiple mode. The added object is sent as a parameter.
-`remove-item` | sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
+<table width="100%">
+  <tr>
+  	<th valign="top" width="120px" align="left">Action</th>
+  	<th valign="top" align="left">Description</th>
+  </tr>
+  <tr>
+    <td valign="top"><code>create-item</code></td>
+    <td valign="top">sent when the user creates a tag. The text is sent as a parameter.</tr>
+  </tr>
+  <tr>
+    <td valign="top"><code>update-filter</code></td>
+    <td valign="top">sent when the user types in the input element (functional equivalent of observing <code>filter</code> property)</tr>
+  </tr>
+  <tr>
+    <td valign="top"><code>select-item</code></td>
+    <td valign="top">sent when the user selects an item (functional equivalent of observing <code>selection</code> property). The selected object is sent as a parameter. When the user deselects the option, parameter is <code>null</code>.</tr>
+  </tr>
+  <tr>
+    <td valign="top"><code>add-item</code></td>
+    <td valign="top">sent when the user selects an item in multiple mode. The added object is sent as a parameter.</tr>
+  </tr>
+  <tr>
+    <td valign="top"><code>remove-item</code></td>
+    <td valign="top">sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.</tr>
+  </tr>
+</table>
 
 Ember selectize supports both APIs.
 
