@@ -44,22 +44,24 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 
 ### Properties
 
-- `content` - Array containing all the options to select from
-- `selection` - Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
-- `value` - Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.
-- `optionValuePath` - Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`
-- `optionLabelPath` - Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: `content.name`
-- `plugins` - Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`
-- `placeholder` or `prompt` - Set any of these to display a text when there is no choice made. Example `"Please select an- option"`
-- `disabled` - If `true` disables changes in selectize
-- `multiple` - If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
-- `sortField` - Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
-- `sortDirection` - If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
-- `filter` - This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
-- `loading` - When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
-- `optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction`  - Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.
-- `optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` - Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
-- `required` - If `true` adds `required` attribute
+Property | Description
+-|-
+`content` | Array containing all the options to select from
+`selection` | Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
+`value` | Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.
+`optionValuePath` | Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`
+`optionLabelPath` | Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: `content.name`
+`plugins` | Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`
+`placeholder` or `prompt` | Set any of these to display a text when there is no choice made. Example `"Please select an option"`
+`disabled` | If `true` disables changes in selectize
+`multiple` | If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
+`sortField` | Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
+`sortDirection` | If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
+`filter` | This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
+`loading` | When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
+`optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction`  | Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.
+`optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` | Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
+`required` | If `true` adds `required` attribute
 
 ember-selectize also supports [selectize's general options](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md#general), excluding `options` and `items` (equivalent to `content` and `selection` respectively).
 
@@ -67,11 +69,13 @@ ember-selectize also supports [selectize's general options](https://github.com/b
 
 Ember is moving towards a paradigm that encourages the use of actions. With this in mind, ember selectize provides a set of actions. The goal is to not use two way data bindings, that is, you pass the data to your components, but the components send actions up to let you (and only you) change the data. Here are the actions the ember selectize supports:
 
-- `create-item` - sent when the user creates a tag. The text is sent as a parameter.
-- `update-filter` - sent when the user types in the input element (functional equivalent of observing `filter` property)
-- `select-item` - sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
-- `add-item` - sent when the user selects an item in multiple mode. The added object is sent as a parameter.
-- `remove-item` - sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
+Action | Description
+-|-
+`create-item` | sent when the user creates a tag. The text is sent as a parameter.
+`update-filter` | sent when the user types in the input element (functional equivalent of observing `filter` property)
+`select-item` | sent when the user selects an item (functional equivalent of observing `selection` property). The selected object is sent as a parameter. When the user deselects the option, parameter is `null`.
+`add-item` | sent when the user selects an item in multiple mode. The added object is sent as a parameter.
+`remove-item` | sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.
 
 Ember selectize supports both APIs.
 
