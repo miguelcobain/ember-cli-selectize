@@ -44,24 +44,76 @@ Its usage should be very similar to `Ember.Select`, but with additional features
 
 ### Properties
 
-Property | Description
--|-
-`content` | Array containing all the options to select from
-`selection` | Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.
-`value` | Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.
-`optionValuePath` | Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`
-`optionLabelPath` | Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: `content.name`
-`plugins` | Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`
-`placeholder` or `prompt` | Set any of these to display a text when there is no choice made. Example `"Please select an option"`
-`disabled` | If `true` disables changes in selectize
-`multiple` | If `true` ember-selectize will enter multiple mode. `selection` is an array of options.
-`sortField` | Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`
-`sortDirection` | If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).
-`filter` | This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.
-`loading` | When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.
-`optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction`  | Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.
-`optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView` | Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).
-`required` | If `true` adds `required` attribute
+<table width="100%">
+  <tr>
+  	<th valign="top" width="120px" align="left">Property</th>
+  	<th valign="top" align="left">Description</th>
+  </tr>
+  <tr>
+    <td valign="top">`content`</td>
+    <td valign="top">Array containing all the options to select from</td>
+  </tr>
+  <tr>
+    <td valign="top">`selection`</td>
+    <td valign="top">Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If `multiple` is `true`, then it should be an array.</td>
+  </tr>
+  <tr>
+    <td valign="top">`value`</td>
+    <td valign="top">Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.</td>
+  </tr>
+  <tr>
+    <td valign="top">`optionValuePath`</td>
+    <td valign="top">Selectize requires a unique hash for each option available. Set this to a path to such a property on your options. Prefix with `content.`. Example: `content.id`</td>
+  </tr>
+  <tr>
+    <td valign="top">`optionLabelPath`</td>
+    <td valign="top">Set this to a path where selectize can get a label for display. Computed properties are many times useful for this. If Ember-selectize detects a "falsy" value, it will use an empty string. Example: `content.name`</td>
+  </tr>
+  <tr>
+    <td valign="top">`plugins`</td>
+    <td valign="top">Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: `restore_on_backspace,drag_drop`</td>
+  </tr>
+  <tr>
+    <td valign="top">`placeholder` or `prompt`</td>
+    <td valign="top">Set any of these to display a text when there is no choice made. Example `"Please select an option"`</td>
+  </tr>
+  <tr>
+    <td valign="top">`disabled`</td>
+    <td valign="top">If `true` disables changes in selectize</td>
+  </tr>
+  <tr>
+    <td valign="top">`multiple`</td>
+    <td valign="top">If `true` ember-selectize will enter multiple mode. `selection` is an array of options.</td>
+  </tr>
+  <tr>
+    <td valign="top">`sortField`</td>
+    <td valign="top">Pass a string of a property to sort by. You can also pass an array of objects `[{ field: 'someProperty', direction: 'asc' }, {/*...*/}]`. See [selectize usage](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md) for details. Example: `"name"`</td>
+  </tr>
+  <tr>
+    <td valign="top">`sortDirection`</td>
+    <td valign="top">If `sortField` is a string, specify the direction. Example: `"asc"` or `"desc"`. This is ignored if `sortField` is an array (you can specify direction inside that array).</td>
+  </tr>
+  <tr>
+    <td valign="top">`filter`</td>
+    <td valign="top">This property will have the text that the user entered to filter options. Useful for searching options in server from a large set.</td>
+  </tr>
+  <tr>
+    <td valign="top">`loading`</td>
+    <td valign="top">When `true` ember-selectize adds a loading class to selectize wrapper. Just like selectize does. Then you can customize. Useful with async relationships or "finds" in Ember-Data: `loading=types.isPending`.</td>
+  </tr>
+  <tr>
+    <td valign="top">`optionFunction`, `itemFunction`, `optionCreateFunction`, `optgroupHeaderFunction`, `optgroupFunction` </td>
+    <td valign="top">Will be called on the component with two parameters `data` and `escape`. `escape` is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their `*Template` and `*View` counterparts.</td>
+  </tr>
+  <tr>
+    <td valign="top">`optionTemplate`,`itemTemplate`,`optionCreateTemplate`,`optgroupHeaderTemplate`,`optgroupTemplate` `optionView`,`itemView`,`optionCreateView`,`optgroupHeaderView` and `optgroupView`</td>
+    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting optionView and optionTemplate, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check [this issue](https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784).</td>
+  </tr>
+  <tr>
+    <td valign="top">`required`</td>
+    <td valign="top">If `true` adds `required` attribute</tr>
+  </tr>
+</table>
 
 ember-selectize also supports [selectize's general options](https://github.com/brianreavis/selectize.js/blob/master/docs/usage.md#general), excluding `options` and `items` (equivalent to `content` and `selection` respectively).
 
