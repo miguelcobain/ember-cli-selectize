@@ -138,9 +138,11 @@ export default Ember.Component.extend({
                           'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab'];
 
-    generalOptions.forEach(Ember.run.bind(this, function(option) {
-      options[option] = this.get(option);
-    }));
+    var self = this;
+
+    generalOptions.forEach(function(option) {
+      options[option] = self.get(option);
+    });
 
     options = this._mergeSortField(options);
 
