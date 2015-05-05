@@ -27,12 +27,80 @@ export default Ember.Component.extend({
   */
   optionValuePath: 'content',
   optionLabelPath: 'content',
+  optionGroupPath: 'content.group',
 
   selection: null,
-  value: computed('selection', {get: function() {
-    var valuePath = this.get('_valuePath');
-    return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
-  }, set: function(key, value){ return value; }}),
+  value: computed('selection', {
+    get: function() {
+      var valuePath = this.get('_valuePath');
+      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+    },
+    set: function(key, value){
+      return value;
+    }
+  }),
+
+  /*
+   * Contains optgroups.
+   */
+  optgroups: computed('content.@each', 'groupedContent.@each', function() {
+    var groupedContent = this.get('groupedContent');
+    if (groupedContent) {
+      return groupedContent.mapBy('label');
+    } else {
+      //compute option groups from content
+      var content = this.get('content');
+      if (!content) { return; }
+
+      var _this = this;
+      return content.reduce(function(previousValue, item) {
+        return previousValue.addObject(get(item, _this.get('_groupPath')));
+      }, Ember.A());
+    }
+  }),
+  /**
+   * Computes content from grouped content.
+   * If `content` is set, this computed property is overriden and never executed.
+   */
+  content: computed('groupedContent.@each', function() {
+    var groupedContent = this.get('groupedContent');
+    var _this = this;
+
+    if (!groupedContent) { return; }
+
+    //concatenate all content properties in each group
+    return groupedContent.reduce(function(previousValue, group) {
+      var content = get(group, 'content') || Ember.A();
+      var groupLabel = get(group, 'label');
+
+      //create proxies for each object. Selectize requires the group value to be
+      //set in the object. Use ObjectProxy to keep original object intact.
+      var proxiedContent = content.map(function(item) {
+        var proxy = { content: item };
+        proxy[_this.get('_groupPath')] = groupLabel;
+        return Ember.ObjectProxy.create(proxy);
+      });
+
+      return previousValue.pushObjects(proxiedContent);
+    }, Ember.A());
+  }),
+
+
+  _optgroupsDidChange: Ember.observer('optgroups.@each', function() {
+    if (!this._selectize) {
+      return;
+    }
+    //TODO right now we reset option groups.
+    //Ideally we would set up an array observer and use selectize's [add|remove]OptionGroup
+    this._selectize.clearOptionGroups();
+    var optgroups = this.get('optgroups');
+    if (!optgroups) { return; }
+
+    var _this = this;
+    optgroups.forEach(function(group) {
+      _this._selectize.addOptionGroup(group, { label: group, value: group});
+    });
+  }),
 
   /**
   * The array of the default plugins to load into selectize
@@ -48,6 +116,9 @@ export default Ember.Component.extend({
   }),
   _labelPath: computed('optionLabelPath', function() {
     return this.get('optionLabelPath').replace(/^content\.?/, '');
+  }),
+  _groupPath: computed('optionGroupPath', function() {
+    return this.get('optionGroupPath').replace(/^content\.?/, '');
   }),
 
   /**
@@ -123,6 +194,7 @@ export default Ember.Component.extend({
       labelField: 'label',
       valueField: 'value',
       searchField: 'label',
+      optgroupField: 'optgroup',
       create: allowCreate ? Ember.run.bind(this, '_create') : false,
       onItemAdd: Ember.run.bind(this, '_onItemAdd'),
       onItemRemove: Ember.run.bind(this, '_onItemRemove'),
@@ -157,6 +229,7 @@ export default Ember.Component.extend({
     //Some changes to content, selection and disabled could have happened before the Component was inserted into the DOM.
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
+    this._optgroupsDidChange();
     this._contentDidChange();
 
     var selection = this.get('selection');
@@ -296,7 +369,7 @@ export default Ember.Component.extend({
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
-  _selectionDidChange: Ember.observer(function() {
+  _selectionDidChange: Ember.observer('selection', function() {
     if (!this._selectize) {
       return;
     }
@@ -335,7 +408,7 @@ export default Ember.Component.extend({
         }
       }
     }
-  }, 'selection'),
+  }),
 
   /**
    * It is possible to control the selected item through its value.
@@ -418,7 +491,7 @@ export default Ember.Component.extend({
   * Ember observer triggered when the content property is changed
   * We need to bind an array observer to become notified of its changes
   */
-  _contentDidChange: Ember.observer(function() {
+  _contentDidChange: Ember.observer('content', function() {
     if (!this._selectize) {
       return;
     }
@@ -431,7 +504,7 @@ export default Ember.Component.extend({
     }
     var len = content ? get(content, 'length') : 0;
     this.contentArrayDidChange(content, 0, null, len);
-  }, 'content'),
+  }),
   /*
   * Triggered before the content array changes
   * Here we process the removed elements
@@ -490,6 +563,10 @@ export default Ember.Component.extend({
         }
       }
 
+      if (get(obj, this.get('_groupPath'))) {
+        data.optgroup = get(obj, this.get('_groupPath'));
+      }
+
     } else {
       data = {
         label: obj,
@@ -544,7 +621,7 @@ export default Ember.Component.extend({
   /*
   * Observer on the disabled property that enables or disables selectize.
   */
-  _disabledDidChange: Ember.observer(function() {
+  _disabledDidChange: Ember.observer('disabled', function() {
     if (!this._selectize) { return; }
     var disable = this.get('disabled');
     if (disable) {
@@ -552,21 +629,21 @@ export default Ember.Component.extend({
     } else {
       this._selectize.enable();
     }
-  }, 'disabled'),
+  }),
   /*
   * Observer on the placeholder property that updates selectize's placeholder.
   */
-  _placeholderDidChange: Ember.observer(function() {
+  _placeholderDidChange: Ember.observer('placeholder', function() {
     if (!this._selectize) { return; }
     var placeholder = this.get('placeholder');
     this._selectize.settings.placeholder = placeholder;
     this._selectize.updatePlaceholder();
-  }, 'placeholder'),
+  }),
   /*
   * Observer on the loading property.
   * Here we add/remove a css class, similarly to how selectize does.
   */
-  _loadingDidChange: Ember.observer(function() {
+  _loadingDidChange: Ember.observer('loading', function() {
     var loading = this.get('loading');
     var loadingClass = this.get('loadingClass');
     if (loading) {
@@ -574,7 +651,7 @@ export default Ember.Component.extend({
     } else {
       this._selectize.$wrapper.removeClass(loadingClass);
     }
-  }, 'loading'),
+  }),
 
   _templateToString: function(templateName, data) {
     var template = this.container.lookup('template:' + templateName);

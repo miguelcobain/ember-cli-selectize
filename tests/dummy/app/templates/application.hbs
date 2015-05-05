@@ -91,3 +91,27 @@ See: https://github.com/emberjs/ember.js/issues/5534#issuecomment-81818954
     create-item="createTag"}}
 </p>
 <p>Selected: {{taggedValuesString}}</p>
+
+<h3>Optgroup example with <code>groupedContent</code></h3>
+<p>
+  {{ember-selectize
+    optionValuePath="content.id"
+    optionLabelPath="content.title"
+    groupedContent=groupedContent
+    selection=selectedPost}}
+</p>
+<p>Selected: {{selectedPost.title}}</p>
+<button {{action "addPostGrouped"}}>Add post on "Another" category (groupedContent)</button>
+
+<h3>Optgroup example with <code>optionGroupPath</code></h3>
+<p>
+  {{ember-selectize
+    optionValuePath="content.id"
+    optionLabelPath="content.title"
+    content=posts
+    optionGroupPath="content.category"
+    selection=selectedPost}}
+</p>
+<p>Selected: {{selectedPost.title}}</p>
+
+<button {{action "addPost"}}>Add post on "Another 2" category</button>
