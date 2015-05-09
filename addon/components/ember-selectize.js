@@ -29,10 +29,20 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: computed('selection', {get: function() {
-    var valuePath = this.get('_valuePath');
-    return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
-  }, set: function(key, value){ return value; }}),
+  _selection: Ember.computed.readOnly('selection'),
+  
+  value: Ember.computed.oneWay('_selection'),
+  
+  _value: computed('value', {
+    get: function() {
+      var valuePath = this.get('_valuePath');
+      return valuePath ? this.get('value.' + valuePath) : this.get('value');
+    }, 
+    set: function(key, value) { 
+      this.set('value', value);
+      return value; 
+    }
+  }),
 
   /**
   * The array of the default plugins to load into selectize
@@ -154,15 +164,16 @@ export default Ember.Component.extend({
     //Save the created selectize instance
     this._selectize = this.$()[0].selectize;
 
-    //Some changes to content, selection and disabled could have happened before the Component was inserted into the DOM.
+    //Some changes to content, value and disabled could have happened before the Component was inserted into the DOM.
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
     this._contentDidChange();
 
-    var selection = this.get('selection');
+    //var value = this.get('value');
     var value = this.get('value');
-    if (!isNone(selection)) { this._selectionDidChange(); }
-    if (!isNone(value)) { this._valueDidChange(); }
+    //if (!isNone(selection)) { this._selectionDidChange(); }
+    
+    if (!isNone(value)) { this._selectionDidChange(); }
 
     this._loadingDidChange();
   },
@@ -204,23 +215,23 @@ export default Ember.Component.extend({
   },
   /**
   * Event callback triggered when an item is added (when something is selected)
-  * Here we need to update our selection property (if single selection) or array (if multiple selection)
+  * Here we need to update our value property (if single value) or array (if multiple values)
   * We also send an action
   */
   _onItemAdd: function(value) {
     var content = this.get('content');
-    var selection = this.get('selection');
+    var currentValue = this.get('value');
     var multiple = this.get('multiple');
     if (content) {
       var obj = content.find(function(item) {
         return (get(item, this.get('_valuePath')) + '') === value;
       }, this);
-      if (multiple && isArray(selection) && obj) {
-        if (!selection.findBy(this.get('_valuePath'), get(obj, this.get('_valuePath')))) {
+      if (multiple && isArray(currentValue) && obj) {
+        if (!currentValue.findBy(this.get('_valuePath'), get(obj, this.get('_valuePath')))) {
           this._addSelection(obj);
         }
       } else if (obj) {
-        if (!selection || (get(obj, this.get('_valuePath')) !== get(selection, this.get('_valuePath')))) {
+        if (!currentValue || (get(obj, this.get('_valuePath')) !== get(currentValue, this.get('_valuePath')))) {
           this._updateSelection(obj);
         }
       }
@@ -228,7 +239,7 @@ export default Ember.Component.extend({
   },
   /**
   * Event callback triggered when an item is removed (when something is deselected)
-  * Here we need to update our selection property (if single selection, here set to null) or remove item from array (if multiple selection)
+  * Here we need to update our value property (if single value, here set to null) or remove item from array (if multiple value)
   */
   _onItemRemove: function(value) {
     //in order to know if this event was triggered by observers or if it came from user interaction
@@ -236,13 +247,13 @@ export default Ember.Component.extend({
       return;
     }
     var content = this.get('content');
-    var selection = this.get('selection');
+    var currentValue  = this.get('value');
     var multiple = this.get('multiple');
     if (content) {
       var obj = content.find(function(item) {
         return get(item, this.get('_valuePath')) + '' === value;
       }, this);
-      if (multiple && isArray(selection) && obj) {
+      if (multiple && isArray(currentValue) && obj) {
         this._removeSelection(obj);
       } else if (!multiple) {
         this._updateSelection(null);
@@ -253,45 +264,45 @@ export default Ember.Component.extend({
  /**
   * Update the selection value and send main action
   */
-  _updateSelection: function(selection) {
-    this.set('selection', selection);
+  _updateSelection: function(value) {
+    this.set('value', value);
 
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
       var value = this.get('value');
-      this.sendAction('select-item', selection, value);
+      this.sendAction('select-item', value);
     });
   },
   _addSelection: function(obj) {
-    this.get('selection').addObject(obj);
+    this.get('value').addObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('add-item', obj);
     });
   },
   _removeSelection: function(obj) {
-    this.get('selection').removeObject(obj);
+    this.get('value').removeObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('remove-item', obj);
     });
   },
   /**
-  * Ember observer triggered before the selection property is changed
-  * We need to unbind any array observers if we're in multiple selection
+  * Ember observer triggered before the value property is changed
+  * We need to unbind any array observers if we're in multiple value
   */
   _selectionWillChange: Ember.beforeObserver(function() {
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
-    if (selection && isArray(selection) && multiple) {
-      selection.removeArrayObserver(this,  {
+    var value = this.get('value');
+    if (value && isArray(value) && multiple) {
+      value.removeArrayObserver(this,  {
         willChange: 'selectionArrayWillChange',
         didChange: 'selectionArrayDidChange'
       });
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayWillChange(selection, 0, len);
+      var len = value ? get(value, 'length') : 0;
+      this.selectionArrayWillChange(value, 0, len);
     }
-  }, 'selection'),
+  }, 'value'),
   /**
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
@@ -301,60 +312,41 @@ export default Ember.Component.extend({
       return;
     }
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
+    var value = this.get('value');
     if (multiple) {
-      if (selection) {
-        //Normalize selection to an array
-        if (!isArray(selection)) {
-          selection = Ember.A([selection]);
-          this.set('selection', selection);
+      if (value) {
+        //Normalize value to an array
+        if (!isArray(value)) {
+          value = Ember.A([value]);
+          this.set('value', value);
           return;
         }
-        //bind array observers to listen for selection changes
-        selection.addArrayObserver(this, {
+        //bind array observers to listen for value changes
+        value.addArrayObserver(this, {
           willChange: 'selectionArrayWillChange',
           didChange: 'selectionArrayDidChange'
         });
       } else {
-        //selection was changed to nothing
-        this.set('selection', Ember.A());
+        //value was changed to nothing
+        this.set('value', Ember.A());
         return;
       }
-      //Trigger a selection change that will update selectize with the new selection
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayDidChange(selection, 0, null, len);
+      //Trigger a value change that will update selectize with the new value
+      var len = value ? get(value, 'length') : 0;
+      this.selectionArrayDidChange(value, 0, null, len);
     } else {
-      if (selection) {
+      if (value) {
         //select item in selectize
-        this._selectize.addItem(get(selection, this.get('_valuePath')));
+        this._selectize.addItem(get(value, this.get('_valuePath')));
       } else {
-        //selection was changed to a falsy value. Clear selectize.
+        //value was changed to a falsy value. Clear selectize.
         if (this._selectize) {
           this._selectize.clear();
           this._selectize.showInput();
         }
       }
     }
-  }, 'selection'),
-
-  /**
-   * It is possible to control the selected item through its value.
-   */
-  _valueDidChange: Ember.observer('value', function() {
-    var content = this.get('content');
-    var value = this.get('value');
-    var valuePath = this.get('_valuePath');
-    var selectedValue = (valuePath ? this.get('selection.' + valuePath) : this.get('selection'));
-    var selection;
-
-    if (value !== selectedValue) {
-      selection = content ? content.find(function(obj) {
-        return value === (valuePath ? get(obj, valuePath) : obj);
-      }) : null;
-
-      this.set('selection', selection);
-    }
-  }),
+  }, 'value'),
 
   /*
   * Triggered before the selection array changes
