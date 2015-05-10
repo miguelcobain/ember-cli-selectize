@@ -14,5 +14,8 @@ module.exports = {
 
     //import javascript
     app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
+  },
+  isDevelopingAddon: function() {
+    return true;
   }
 };
