@@ -217,29 +217,6 @@ test('replacing content updates selectize options', function(assert) {
   assert.deepEqual(asArray(component._selectize.options, 'label'), ['item 1']);
 });
 
-
-test('setting value does update selectize items', function(assert) {
-  var component = this.subject();
-  Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
-    component.set('value', 'item 2');
-  });
-  this.render();
-  assert.equal(component._selectize.items.length, 1);
-  assert.deepEqual(component._selectize.items, ['item 2']);
-});
-
-test('setting value does not update selection property', function(assert) {
-  var component = this.subject();
-  Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
-    component.set('value', 'item 2');
-  });
-  this.render();
-  assert.equal(component.get('selection'), null);
-});
-
-
 test('having a selection creates selectize with a selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {

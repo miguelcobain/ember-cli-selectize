@@ -28,21 +28,11 @@ export default Ember.Component.extend({
   optionValuePath: 'content',
   optionLabelPath: 'content',
 
+  /**
+  * selection is one way.
+  */
   selection: null,
-  _selection: Ember.computed.readOnly('selection'),
-  
-  value: Ember.computed.oneWay('_selection'),
-  
-  _value: computed('value', {
-    get: function() {
-      var valuePath = this.get('_valuePath');
-      return valuePath ? this.get('value.' + valuePath) : this.get('value');
-    }, 
-    set: function(key, value) { 
-      this.set('value', value);
-      return value; 
-    }
-  }),
+  _selection: Ember.computed.oneWay('selection'),
 
   /**
   * The array of the default plugins to load into selectize
@@ -169,11 +159,8 @@ export default Ember.Component.extend({
     this._disabledDidChange();
     this._contentDidChange();
 
-    //var value = this.get('value');
-    var value = this.get('value');
-    //if (!isNone(selection)) { this._selectionDidChange(); }
-    
-    if (!isNone(value)) { this._selectionDidChange(); }
+    var selection = this.get('selection');
+    if (!isNone(selection)) { this._selectionDidChange(); }
 
     this._loadingDidChange();
   },
@@ -220,7 +207,7 @@ export default Ember.Component.extend({
   */
   _onItemAdd: function(value) {
     var content = this.get('content');
-    var currentValue = this.get('value');
+    var currentValue = this.get('_selection');
     var multiple = this.get('multiple');
     if (content) {
       var obj = content.find(function(item) {
@@ -247,7 +234,7 @@ export default Ember.Component.extend({
       return;
     }
     var content = this.get('content');
-    var currentValue  = this.get('value');
+    var currentValue  = this.get('_selection');
     var multiple = this.get('multiple');
     if (content) {
       var obj = content.find(function(item) {
@@ -264,45 +251,40 @@ export default Ember.Component.extend({
  /**
   * Update the selection value and send main action
   */
-  _updateSelection: function(value) {
-    this.set('value', value);
-
-    // allow the observers and computed properties to run first
-    Ember.run.schedule('actions', this, function() {
-      var value = this.get('value');
-      this.sendAction('select-item', value);
-    });
+  _updateSelection: function(selection) {
+    this.sendAction('select-item', selection);
   },
+
   _addSelection: function(obj) {
-    this.get('value').addObject(obj);
+    this.get('_selection').addObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('add-item', obj);
     });
   },
   _removeSelection: function(obj) {
-    this.get('value').removeObject(obj);
+    this.get('_selection').removeObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('remove-item', obj);
     });
   },
   /**
-  * Ember observer triggered before the value property is changed
-  * We need to unbind any array observers if we're in multiple value
+  * Ember observer triggered before the selection property is changed
+  * We need to unbind any array observers if we're in multiple selection
   */
   _selectionWillChange: Ember.beforeObserver(function() {
     var multiple = this.get('multiple');
-    var value = this.get('value');
-    if (value && isArray(value) && multiple) {
-      value.removeArrayObserver(this,  {
+    var selection = this.get('_selection');
+    if (selection && isArray(selection) && multiple) {
+      selection.removeArrayObserver(this,  {
         willChange: 'selectionArrayWillChange',
         didChange: 'selectionArrayDidChange'
       });
-      var len = value ? get(value, 'length') : 0;
-      this.selectionArrayWillChange(value, 0, len);
+      var len = selection ? get(selection, 'length') : 0;
+      this.selectionArrayWillChange(selection, 0, len);
     }
-  }, 'value'),
+  }, '_selection'),
   /**
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
@@ -312,41 +294,44 @@ export default Ember.Component.extend({
       return;
     }
     var multiple = this.get('multiple');
-    var value = this.get('value');
+    var selection = this.get('_selection');
     if (multiple) {
-      if (value) {
-        //Normalize value to an array
-        if (!isArray(value)) {
-          value = Ember.A([value]);
-          this.set('value', value);
+      if (selection) {
+        //Normalize selection to an array
+        if (!isArray(selection)) {
+          selection = Ember.A([selection]);
+          this.set('_selection', selection);
           return;
         }
-        //bind array observers to listen for value changes
-        value.addArrayObserver(this, {
+        //bind array observers to listen for selection changes
+        selection.addArrayObserver(this, {
           willChange: 'selectionArrayWillChange',
           didChange: 'selectionArrayDidChange'
         });
       } else {
-        //value was changed to nothing
-        this.set('value', Ember.A());
+        //selection was changed to nothing
+        this.set('_selection', Ember.A());
         return;
       }
-      //Trigger a value change that will update selectize with the new value
-      var len = value ? get(value, 'length') : 0;
-      this.selectionArrayDidChange(value, 0, null, len);
+      //Trigger a selection change that will update selectize with the new selection
+      var len = selection ? get(selection, 'length') : 0;
+      this.selectionArrayDidChange(selection, 0, null, len);
     } else {
-      if (value) {
+      if (selection) {
+        var item = get(selection, this.get('_valuePath'));
         //select item in selectize
-        this._selectize.addItem(get(value, this.get('_valuePath')));
+        this._selectize.addItem(item);
       } else {
-        //value was changed to a falsy value. Clear selectize.
+        //selection was changed to a falsy selection. Clear selectize.
         if (this._selectize) {
           this._selectize.clear();
           this._selectize.showInput();
         }
       }
     }
-  }, 'value'),
+  }, '_selection'),
+  
+
 
   /*
   * Triggered before the selection array changes
