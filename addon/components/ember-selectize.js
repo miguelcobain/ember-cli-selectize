@@ -189,6 +189,9 @@ export default Ember.Component.extend({
     Ember.run.schedule('actions', this, function() {
       this.sendAction('create-item', input);
     });
+    // Adds item to selection area.
+    this._addSelection(input);
+
     // We cancel the creation here, so it's up to you to include the created element
     // in the content and selection property
     callback(null);
