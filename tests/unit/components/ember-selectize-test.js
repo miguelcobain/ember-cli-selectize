@@ -320,6 +320,7 @@ test('it sends create-item action when an item is created in selectize', functio
     }
   };
   this.render();
+  component.set('selection', []);
   component.set('create-item', 'externalAction');
   component.set('targetObject', targetObject);
 
