@@ -2,8 +2,8 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-  names: ['Tom', 'Yehuda', 'Mike'],
-  items: [
+  names: Ember.A(['Tom', 'Yehuda', 'Mike']),
+  items: Ember.A([
     Ember.Object.create({
       id: 1,
       label: 'Item 1'
@@ -20,14 +20,14 @@ export default Ember.Controller.extend({
       id: 4,
       label: 'Item 4'
     })
-  ],
+  ]),
 
   getOption: function(item, escape) {
     return '<div class="hello"><i>' + escape(item.value) + '</i>) ' + escape(item.label) +'</div>';
   },
 
-  taggedContent: [],
-  taggedValues: [],
+  taggedContent: Ember.A(),
+  taggedValues: Ember.A(),
   itemValue: 3,
   taggedValuesString: Ember.computed('taggedValues.[]', function () {
     return this.get('taggedValues').join(', ');

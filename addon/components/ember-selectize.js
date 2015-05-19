@@ -29,10 +29,10 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: computed('selection', {get: function() {
+  value: computed('selection', function() {
     var valuePath = this.get('_valuePath');
     return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
-  }, set: function(key, value){ return value; }}),
+  }),
 
   /**
   * The array of the default plugins to load into selectize
@@ -148,6 +148,9 @@ export default Ember.Component.extend({
   }),
 
   didInsertElement: function() {
+    // ensure selectize is loaded
+    Ember.assert('selectize has to be loaded', typeof this.$().selectize === 'function');
+
     //Create Selectize's instance
     this.$().selectize(this.get('selectizeOptions'));
 
@@ -166,6 +169,7 @@ export default Ember.Component.extend({
 
     this._loadingDidChange();
   },
+
   willDestroyElement: function() {
     //Unbind observers
     this._contentWillChange();
@@ -297,43 +301,30 @@ export default Ember.Component.extend({
   * We need to bind an array observer when selection is multiple
   */
   _selectionDidChange: Ember.observer(function() {
-    if (!this._selectize) {
-      return;
-    }
+    if (!this._selectize) { return; }
+
     var multiple = this.get('multiple');
     var selection = this.get('selection');
-    if (multiple) {
-      if (selection) {
-        //Normalize selection to an array
-        if (!isArray(selection)) {
-          selection = Ember.A([selection]);
-          this.set('selection', selection);
-          return;
-        }
+
+    if (selection) {
+      if (multiple) {
+        Ember.assert('When ember-selectize is in multiple mode, the provided selection must be an array.', isArray(selection));
         //bind array observers to listen for selection changes
         selection.addArrayObserver(this, {
           willChange: 'selectionArrayWillChange',
           didChange: 'selectionArrayDidChange'
         });
+        //Trigger a selection change that will update selectize with the new selection
+        var len = selection ? get(selection, 'length') : 0;
+        this.selectionArrayDidChange(selection, 0, null, len);
       } else {
-        //selection was changed to nothing
-        this.set('selection', Ember.A());
-        return;
-      }
-      //Trigger a selection change that will update selectize with the new selection
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayDidChange(selection, 0, null, len);
-    } else {
-      if (selection) {
-        //select item in selectize
         this._selectize.addItem(get(selection, this.get('_valuePath')));
-      } else {
-        //selection was changed to a falsy value. Clear selectize.
-        if (this._selectize) {
-          this._selectize.clear();
-          this._selectize.showInput();
-        }
       }
+
+    } else {
+      //selection was changed to a falsy value. Clear selectize.
+      this._selectize.clear();
+      this._selectize.showInput();
     }
   }, 'selection'),
 
