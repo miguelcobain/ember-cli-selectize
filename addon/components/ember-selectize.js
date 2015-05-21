@@ -1,7 +1,6 @@
 import Ember from 'ember';
-import computed from 'ember-new-computed';
 var get = Ember.get, isArray = Ember.isArray, typeOf = Ember.typeOf,
-  isNone = Ember.isNone, camelize = Ember.String.camelize;
+  isNone = Ember.isNone, camelize = Ember.String.camelize, computed = Ember.computed;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
