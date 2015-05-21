@@ -28,7 +28,8 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: computed('selection', function() {
+  value: computed('selection', function(key, value) {
+    if (arguments.length === 2) { return value; }
     var valuePath = this.get('_valuePath');
     return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
   }),
