@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import computed from 'ember-new-computed';
 var get = Ember.get, isArray = Ember.isArray, typeOf = Ember.typeOf,
-  isNone = Ember.isNone, camelize = Ember.String.camelize, computed = Ember.computed;
+  isNone = Ember.isNone, camelize = Ember.String.camelize;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
@@ -28,9 +29,14 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: computed('selection', function() {
-    var valuePath = this.get('_valuePath');
-    return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+  value: computed('selection', {
+    get: function() {
+      var valuePath = this.get('_valuePath');
+      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+    },
+    set: function(key, value) {
+      return value;
+    }
   }),
 
   /**
@@ -299,7 +305,7 @@ export default Ember.Component.extend({
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
-  _selectionDidChange: Ember.observer(function() {
+  _selectionDidChange: Ember.observer('selection', function() {
     if (!this._selectize) { return; }
 
     var multiple = this.get('multiple');
@@ -325,7 +331,7 @@ export default Ember.Component.extend({
       this._selectize.clear();
       this._selectize.showInput();
     }
-  }, 'selection'),
+  }),
 
   /**
    * It is possible to control the selected item through its value.
