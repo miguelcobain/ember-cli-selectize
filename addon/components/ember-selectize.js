@@ -1,6 +1,7 @@
 import Ember from 'ember';
+import computed from 'ember-new-computed';
 var get = Ember.get, isArray = Ember.isArray, typeOf = Ember.typeOf,
-  isNone = Ember.isNone, camelize = Ember.String.camelize, computed = Ember.computed;
+  isNone = Ember.isNone, camelize = Ember.String.camelize;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
@@ -29,9 +30,14 @@ export default Ember.Component.extend({
   optionGroupPath: 'content.group',
 
   selection: null,
-  value: computed('selection', function() {
-    var valuePath = this.get('_valuePath');
-    return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+  value: computed('selection', {
+    get: function() {
+      var valuePath = this.get('_valuePath');
+      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+    },
+    set: function(key, value) {
+      return value;
+    }
   }),
 
   /*
