@@ -4,7 +4,10 @@ import {
   test
 } from 'ember-qunit';
 
-moduleForComponent('ember-selectize', 'EmberSelectizeComponent');
+moduleForComponent('ember-selectize', 'Unit | Component | ember-selectize', {
+  // Specify the other units that are required for this test
+  // needs: ['component:foo', 'helper:bar']
+});
 
 test('it renders', function(assert) {
   assert.expect(2);
@@ -60,7 +63,8 @@ test('placeholder is passed to selectize', function(assert) {
 });
 
 var exampleObjectContent = function() {
-  return [Ember.Object.create({
+  return Ember.A([
+    Ember.Object.create({
       id: 1,
       label: 'item 1'
     }), Ember.Object.create({
@@ -70,7 +74,7 @@ var exampleObjectContent = function() {
       id: 3,
       label: 'item 3'
     })
-  ];
+  ]);
 };
 
 var objectSize = function(obj) {
@@ -108,7 +112,7 @@ var keysToArray = function(obj) {
 test('selectize has correct number of options', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.equal(objectSize(component._selectize.options), 3);
@@ -117,7 +121,7 @@ test('selectize has correct number of options', function(assert) {
 test('if no optionValuePath pass selectize the value itself', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.deepEqual(keysToArray(component._selectize.options), ['item 1', 'item 2', 'item 3']);
@@ -127,7 +131,7 @@ test('if no optionValuePath pass selectize the value itself', function(assert) {
 test('if no optionLabelPath pass selectize the value itself', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.deepEqual(asArray(component._selectize.options, 'label'), ['item 1', 'item 2', 'item 3']);
@@ -140,7 +144,7 @@ test('optionValuePath passes selectize the desired value', function(assert) {
     component.set('optionValuePath', 'id');
   });
   this.render();
-  assert.deepEqual(asArray(component._selectize.options, 'value'), asArray(exampleObjectContent(), 'id'));
+  assert.deepEqual(exampleObjectContent().mapBy('id'), asArray(component._selectize.options, 'value'));
 });
 
 test('optionLabelPath passes selectize the desired label', function(assert) {
@@ -151,7 +155,7 @@ test('optionLabelPath passes selectize the desired label', function(assert) {
     component.set('optionLabelPath', 'label');
   });
   this.render();
-  assert.deepEqual(asArray(component._selectize.options, 'label'), asArray(exampleObjectContent(), 'label'));
+  assert.deepEqual(asArray(component._selectize.options, 'label'), exampleObjectContent().mapBy('label'));
 });
 
 test('selectize labels are updated', function(assert) {
@@ -163,7 +167,7 @@ test('selectize labels are updated', function(assert) {
     component.set('optionLabelPath', 'label');
   });
   this.render();
-  assert.deepEqual(asArray(component._selectize.options, 'label'), asArray(exampleObjectContent(), 'label'));
+  assert.deepEqual(asArray(component._selectize.options, 'label'), exampleObjectContent().mapBy('label'));
 
   Ember.run(function() {
     content.objectAt(0).set('label', 'another label');
@@ -176,7 +180,7 @@ test('selectize labels are updated', function(assert) {
 test('adding to content updates selectize options', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.equal(objectSize(component._selectize.options), 3);
@@ -191,7 +195,7 @@ test('adding to content updates selectize options', function(assert) {
 test('removing from content updates selectize options', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.equal(objectSize(component._selectize.options), 3);
@@ -205,12 +209,12 @@ test('removing from content updates selectize options', function(assert) {
 test('replacing content updates selectize options', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
   });
   this.render();
   assert.equal(objectSize(component._selectize.options), 3);
   Ember.run(function() {
-    component.set('content', ['item 1']);
+    component.set('content', Ember.A(['item 1']));
   });
 
   assert.equal(objectSize(component._selectize.options), 1);
@@ -220,7 +224,7 @@ test('replacing content updates selectize options', function(assert) {
 test('having a selection creates selectize with a selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
     component.set('selection', 'item 2');
   });
   this.render();
@@ -231,8 +235,8 @@ test('having a selection creates selectize with a selection', function(assert) {
 test('having a multiple selection creates selectize with a selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
-    component.set('selection', ['item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
+    component.set('selection', Ember.A(['item 2', 'item 3']));
     component.set('multiple', true);
   });
   this.render();
@@ -243,7 +247,7 @@ test('having a multiple selection creates selectize with a selection', function(
 test('updating a selection updates selectize selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
     component.set('selection', 'item 2');
   });
   this.render();
@@ -259,15 +263,15 @@ test('updating a selection updates selectize selection', function(assert) {
 test('replacing a multiple selection updates selectize selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('selection', ['item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 2', 'item 3']));
     component.set('multiple', true);
   });
   this.render();
   assert.equal(component._selectize.items.length, 2);
   assert.deepEqual(component._selectize.items, ['item 2', 'item 3']);
   Ember.run(function() {
-    component.set('selection', ['item 1', 'item 2', 'item 4']);
+    component.set('selection', Ember.A(['item 1', 'item 2', 'item 4']));
   });
   assert.equal(component._selectize.items.length, 3);
   assert.deepEqual(component._selectize.items, ['item 1', 'item 2', 'item 4']);
@@ -276,8 +280,8 @@ test('replacing a multiple selection updates selectize selection', function(asse
 test('adding a multiple selection updates selectize selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('selection', ['item 2', 'item 3']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 2', 'item 3']));
     component.set('multiple', true);
   });
   this.render();
@@ -340,7 +344,7 @@ test('it sends select-item action when an item is selected', function(assert) {
   };
 
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
     component.set('select-item', 'externalAction');
     component.set('targetObject', targetObject);
   });
@@ -364,7 +368,7 @@ test('it sends select-item action when an item is deselected', function(assert) 
   };
 
   Ember.run(function() {
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
     component.set('selection', 'item 1');
     component.set('select-item', 'externalAction');
     component.set('targetObject', targetObject);
@@ -390,8 +394,8 @@ test('it sends add-item action when an item is selected in multiple mode', funct
 
   Ember.run(function() {
     component.set('multiple', true);
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('selection', ['item 2']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 2']));
     component.set('add-item', 'externalAction');
     component.set('targetObject', targetObject);
   });
@@ -416,8 +420,8 @@ test('it sends remove-item action when an item is deselected in multiple mode', 
 
   Ember.run(function() {
     component.set('multiple', true);
-    component.set('content', ['item 1', 'item 2', 'item 3', 'item 4']);
-    component.set('selection', ['item 2']);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 2']));
     component.set('remove-item', 'externalAction');
     component.set('targetObject', targetObject);
   });
