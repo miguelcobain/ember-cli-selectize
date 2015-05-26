@@ -37,7 +37,7 @@ export default Ember.Component.extend({
   /*
    * Contains optgroups.
    */
-  /*optgroups: computed('content.@each', 'groupedContent.@each', function() {
+  optgroups: computed('content.@each', 'groupedContent.@each', function() {
     var groupedContent = this.get('groupedContent');
     if (groupedContent) {
       return groupedContent.mapBy('label');
@@ -51,12 +51,12 @@ export default Ember.Component.extend({
         return previousValue.addObject(get(item, _this.get('_groupPath')));
       }, Ember.A());
     }
-  }),*/
+  }),
   /**
    * Computes content from grouped content.
    * If `content` is set, this computed property is overriden and never executed.
    */
-  /*content: computed('groupedContent.@each', function() {
+  content: computed('groupedContent.@each', function() {
     var groupedContent = this.get('groupedContent');
     var _this = this;
 
@@ -94,7 +94,7 @@ export default Ember.Component.extend({
     optgroups.forEach(function(group) {
       _this._selectize.addOptionGroup(group, { label: group, value: group});
     });
-  }),*/
+  }),
 
   /**
   * The array of the default plugins to load into selectize
@@ -226,7 +226,7 @@ export default Ember.Component.extend({
     //Some changes to content, selection and disabled could have happened before the Component was inserted into the DOM.
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
-    //this._optgroupsDidChange();
+    this._optgroupsDidChange();
     this._contentDidChange();
 
     var selection = this.get('selection');
@@ -367,7 +367,7 @@ export default Ember.Component.extend({
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
-  _selectionDidChange: Ember.observer(function() {
+  _selectionDidChange: Ember.observer('selection', function() {
     if (!this._selectize) { return; }
 
     var multiple = this.get('multiple');
