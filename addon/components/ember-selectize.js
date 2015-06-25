@@ -123,6 +123,7 @@ export default Ember.Component.extend({
       this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(function(item) { return item.trim(); });
     }
 
+
     var options = {
       plugins: this.plugins,
       labelField: 'label',
@@ -133,7 +134,11 @@ export default Ember.Component.extend({
       onItemRemove: Ember.run.bind(this, '_onItemRemove'),
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
-      placeholder: this.get('placeholder')
+      placeholder: this.get('placeholder'),
+      onBlur: this._registerAction("on-blur"),
+      onFocus: this._registerAction("on-focus"),
+      onInitialize: this._registerAction("on-init"),
+      onClear: this._registerAction("on-clear")
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
@@ -204,6 +209,18 @@ export default Ember.Component.extend({
     // in the content and selection property
     callback(null);
   },
+
+  /**
+  * Event callback for DOM events
+  */
+  _registerAction: function(action){
+    return Ember.run.bind(this, function(){
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(action);
+      this.sendAction.apply(this, args);
+    });
+  },
+
   /**
   * Event callback that is triggered when user types in the input element
   */

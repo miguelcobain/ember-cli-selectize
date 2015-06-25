@@ -483,3 +483,23 @@ test('if label is falsy, don\'t add item, but add it once label updates', functi
 
   assert.deepEqual(asArray(component._selectize.options, 'label'), ['item 1', 'item 2', 'item 3']);
 });
+
+test('it sends on-init', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+
+  var targetObject = {
+    externalAction: function(obj) {
+      assert.ok(true);
+    }
+  };
+
+  Ember.run(function() {
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('on-init', 'externalAction');
+    component.set('targetObject', targetObject);
+  });
+
+  this.render();
+});
