@@ -135,10 +135,10 @@ export default Ember.Component.extend({
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
       placeholder: this.get('placeholder'),
-      onBlur: this._registerAction("on-blur"),
-      onFocus: this._registerAction("on-focus"),
-      onInitialize: this._registerAction("on-init"),
-      onClear: this._registerAction("on-clear")
+      onBlur: this._registerAction('on-blur'),
+      onFocus: this._registerAction('on-focus'),
+      onInitialize: this._registerAction('on-init'),
+      onClear: this._registerAction('on-clear')
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
