@@ -598,7 +598,7 @@ export default Ember.Component.extend({
       throw new TypeError('template ' + templateName + ' does not exist.');
     }
 
-    var view = this.createChildView(Ember.View, {
+    var view = Ember.View.create({
       template: template,
       controller: data,
       container: this.get('container')
