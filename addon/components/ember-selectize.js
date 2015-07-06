@@ -29,10 +29,15 @@ export default Ember.Component.extend({
   optionLabelPath: 'content',
 
   selection: null,
-  value: computed('selection', {get: function() {
-    var valuePath = this.get('_valuePath');
-    return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
-  }, set: function(key, value){ return value; }}),
+  value: computed('selection', {
+    get: function() {
+      var valuePath = this.get('_valuePath');
+      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+    },
+    set: function(key, value) {
+      return value;
+    }
+  }),
 
   /**
   * The array of the default plugins to load into selectize
@@ -118,6 +123,7 @@ export default Ember.Component.extend({
       this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(function(item) { return item.trim(); });
     }
 
+
     var options = {
       plugins: this.plugins,
       labelField: 'label',
@@ -128,7 +134,11 @@ export default Ember.Component.extend({
       onItemRemove: Ember.run.bind(this, '_onItemRemove'),
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
-      placeholder: this.get('placeholder')
+      placeholder: this.get('placeholder'),
+      onBlur: this._registerAction('on-blur'),
+      onFocus: this._registerAction('on-focus'),
+      onInitialize: this._registerAction('on-init'),
+      onClear: this._registerAction('on-clear')
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
@@ -138,9 +148,11 @@ export default Ember.Component.extend({
                           'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab'];
 
-    generalOptions.forEach(Ember.run.bind(this, function(option) {
-      options[option] = this.get(option);
-    }));
+    var self = this;
+
+    generalOptions.forEach(function(option) {
+      options[option] = self.get(option);
+    });
 
     options = this._mergeSortField(options);
 
@@ -148,6 +160,9 @@ export default Ember.Component.extend({
   }),
 
   didInsertElement: function() {
+    // ensure selectize is loaded
+    Ember.assert('selectize has to be loaded', typeof this.$().selectize === 'function');
+
     //Create Selectize's instance
     this.$().selectize(this.get('selectizeOptions'));
 
@@ -166,6 +181,7 @@ export default Ember.Component.extend({
 
     this._loadingDidChange();
   },
+
   willDestroyElement: function() {
     //Unbind observers
     this._contentWillChange();
@@ -193,6 +209,18 @@ export default Ember.Component.extend({
     // in the content and selection property
     callback(null);
   },
+
+  /**
+  * Event callback for DOM events
+  */
+  _registerAction: function(action){
+    return Ember.run.bind(this, function(){
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(action);
+      this.sendAction.apply(this, args);
+    });
+  },
+
   /**
   * Event callback that is triggered when user types in the input element
   */
@@ -296,46 +324,33 @@ export default Ember.Component.extend({
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
-  _selectionDidChange: Ember.observer(function() {
-    if (!this._selectize) {
-      return;
-    }
+  _selectionDidChange: Ember.observer('selection', function() {
+    if (!this._selectize) { return; }
+
     var multiple = this.get('multiple');
     var selection = this.get('selection');
-    if (multiple) {
-      if (selection) {
-        //Normalize selection to an array
-        if (!isArray(selection)) {
-          selection = Ember.A([selection]);
-          this.set('selection', selection);
-          return;
-        }
+
+    if (selection) {
+      if (multiple) {
+        Ember.assert('When ember-selectize is in multiple mode, the provided selection must be an array.', isArray(selection));
         //bind array observers to listen for selection changes
         selection.addArrayObserver(this, {
           willChange: 'selectionArrayWillChange',
           didChange: 'selectionArrayDidChange'
         });
+        //Trigger a selection change that will update selectize with the new selection
+        var len = selection ? get(selection, 'length') : 0;
+        this.selectionArrayDidChange(selection, 0, null, len);
       } else {
-        //selection was changed to nothing
-        this.set('selection', Ember.A());
-        return;
-      }
-      //Trigger a selection change that will update selectize with the new selection
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayDidChange(selection, 0, null, len);
-    } else {
-      if (selection) {
-        //select item in selectize
         this._selectize.addItem(get(selection, this.get('_valuePath')));
-      } else {
-        //selection was changed to a falsy value. Clear selectize.
-        if (this._selectize) {
-          this._selectize.clear();
-          this._selectize.showInput();
-        }
       }
+
+    } else {
+      //selection was changed to a falsy value. Clear selectize.
+      this._selectize.clear();
+      this._selectize.showInput();
     }
-  }, 'selection'),
+  }),
 
   /**
    * It is possible to control the selected item through its value.
@@ -583,7 +598,7 @@ export default Ember.Component.extend({
       throw new TypeError('template ' + templateName + ' does not exist.');
     }
 
-    var view = this.createChildView(Ember.View, {
+    var view = Ember.View.create({
       template: template,
       controller: data,
       container: this.get('container')

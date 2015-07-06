@@ -1,69 +1,87 @@
 <h2 id='title'>Selectize test</h2>
 
-<p>{{ember-selectize
-  content=controller.items
-  optionValuePath="content.id"
-  optionLabelPath="content.label"
-  selection=item
-  create="createAction"
-  placeholder="Select an item" }}</p>
-<p>Selected: {{item.label}}</p>
-
-<p>{{ember-selectize
-  content=controller.names
-  selection=name
-  placeholder="Select a name" }}</p>
+<h3>Normal usage with strings</h3>
+<p>
+  {{ember-selectize
+    content=names
+    selection=name
+    placeholder="Select a name" }}
+</p>
 <p>Selected: {{name}}</p>
 
-<p>{{ember-selectize
-  content=controller.items
-  optionValuePath="content.id"
-  optionLabelPath="content.label"
-  value=controller.itemValue
-  create="createAction"
-  placeholder="Select an item" }}</p>
+<h3>Normal usage with objects + <code>selection</code></h3>
+<p>
+  {{ember-selectize
+    content=items
+    optionValuePath="content.id"
+    optionLabelPath="content.label"
+    selection=item
+    create-item="createAction"
+    placeholder="Select an item" }}
+</p>
+<p>Selected: {{item.label}}</p>
+
+<h3>Normal usage with objects + <code>value</code></h3>
+<p>
+  {{ember-selectize
+    content=items
+    optionValuePath="content.id"
+    optionLabelPath="content.label"
+    value=itemValue
+    create-item="createAction"
+    placeholder="Select an item" }}
+</p>
 <p>Selected: {{itemValue}}</p>
 
 <button {{action "selectItem" 1}}>Select 1</button>
 <button {{action "selectItem" 3}}>Select 3</button>
 
-<p>{{ember-selectize
-  multiple=true
-  content=controller.items
-  optionValuePath="content.id"
-  optionLabelPath="content.label"
-  value=itemValues
-  create="createAction"
-  placeholder="Select an item" }}</p>
-<p>Selected: {{itemValues}}</p>
+<h3>Multiple usage with objects + <code>selection</code></h3>
+<p>
+  {{ember-selectize
+    multiple=true
+    content=items
+    optionValuePath="content.id"
+    optionLabelPath="content.label"
+    selection=itemValues
+    create="createAction"
+    placeholder="Select an item" }}
+</p>
+<p>Selected: <ul>{{#each itemValues as |v|}}<li>{{v.label}}</li>{{/each}}</ul></p>
 
+<h3>Multiple usage with objects + <code>optionFunction</code> rendering</h3>
+<p>
+  {{ember-selectize
+    multiple=true
+    content=items
+    optionValuePath="content.id"
+    optionLabelPath="content.label"
+    selection=itemValues
+    create="createAction"
+    optionFunction=getOption
+    placeholder="Select an item" }}
+</p>
+<p>Selected: <ul>{{#each itemValues as |v|}}<li>{{v.label}}</li>{{/each}}</ul></p>
 
-<p>{{ember-selectize
-  multiple=true
-  content=controller.items
-  optionValuePath="content.id"
-  optionLabelPath="content.label"
-  value=itemValues
-  create="createAction"
-  optionFunction=getOption
-  placeholder="Select an item" }}</p>
-<p>Selected: {{itemValues}}</p>
+<h3><code>optionTemplate</code> usage example</h3>
+<p id="template-test">
+  {{ember-selectize
+    content=items
+    optionValuePath="content.id"
+    optionLabelPath="content.label"
+    selection=item
+    optionTemplate="test"
+    placeholder="Select an item" }}
+</p>
 
-<p>{{ember-selectize
-  content=controller.items
-  optionValuePath="content.id"
-  optionLabelPath="content.label"
-  selection=item
-  optionTemplate="test"
-  placeholder="Select an item" }}</p>
-
-<p class='tagged-selectize'>{{ember-selectize
-      persist=false
-      multiple=true
-      content=taggedContent
-      selection=taggedValues
-      delimiter=','
-      create-item='createTag'}}
-  </p>
-  <p>Selected: {{taggedValuesString}}</p>
-
+<h3>Delimiter example</h3>
+<p>
+  {{ember-selectize
+    persist=false
+    multiple=true
+    content=taggedContent
+    selection=taggedValues
+    delimiter=","
+    create-item="createTag"}}
+</p>
+<p>Selected: {{taggedValuesString}}</p>
