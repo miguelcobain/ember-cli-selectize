@@ -135,23 +135,23 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
   </tr>
   <tr>
     <td valign="top"><code>create-item</code></td>
-    <td valign="top">sent when the user creates a tag. The text is sent as a parameter.</tr>
+    <td valign="top">sent when the user creates a tag. The text is sent as a parameter.</td>
   </tr>
   <tr>
     <td valign="top"><code>update-filter</code></td>
-    <td valign="top">sent when the user types in the input element (functional equivalent of observing <code>filter</code> property)</tr>
+    <td valign="top">sent when the user types in the input element (functional equivalent of observing <code>filter</code> property)</td>
   </tr>
   <tr>
-    <td valign="top"><code>select-item</code></td>
-    <td valign="top">sent when the user selects an item (functional equivalent of observing <code>selection</code> property). The selected object is sent as a parameter. When the user deselects the option, parameter is <code>null</code>.</tr>
+    <td valign="top"><code>select-item</code> / <code>select-value</code></td>
+    <td valign="top">sent when the user selects an item (functional equivalent of observing <code>selection</code> property). The selected object is sent as a parameter. When the user deselects the option, parameter is <code>null</code>. `select-value` is identical, but gets the selected value passed in.</td>
   </tr>
   <tr>
-    <td valign="top"><code>add-item</code></td>
-    <td valign="top">sent when the user selects an item in multiple mode. The added object is sent as a parameter.</tr>
+    <td valign="top"><code>add-item</code> / <code>add-value</code></td>
+    <td valign="top">sent when the user selects an item in multiple mode. The added object is sent as a parameter.  `add-value` is identical, but gets the added value passed in.</td>
   </tr>
   <tr>
-    <td valign="top"><code>remove-item</code></td>
-    <td valign="top">sent when the user deselects an item in multiple mode. The removed object is sent as a parameter.</tr>
+    <td valign="top"><code>remove-item</code> / <code>remove-value</code></td>
+    <td valign="top">sent when the user deselects an item in multiple mode. The removed object is sent as a parameter. `remove-value` is identical, but gets the removed value passed in.</td>
   </tr>
 </table>
 

@@ -375,6 +375,32 @@ test('it sends select-item action when an item is selected', function(assert) {
   });
 });
 
+test('it sends select-value action when an item is selected', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, 1);
+    }
+  };
+
+  Ember.run(function() {
+    component.set('content', contentArray);
+    component.set('select-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemAdd('1');
+  });
+});
+
 test('it sends select-item action when an item is deselected', function(assert) {
   assert.expect(1);
 
@@ -397,6 +423,33 @@ test('it sends select-item action when an item is deselected', function(assert) 
 
   Ember.run(function() {
     component._onItemRemove('item 1');
+  });
+});
+
+test('it sends select-value action when an item is deselected', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, null, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('content', contentArray);
+    component.set('selection', contentArray.objectAt(0));
+    component.set('select-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemRemove('1');
   });
 });
 
@@ -426,7 +479,63 @@ test('it sends add-item action when an item is selected in multiple mode', funct
   });
 });
 
+test('it sends add-value action when an item is selected in multiple mode', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(obj) {
+      assert.equal(obj, 3, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('multiple', true);
+    component.set('content', contentArray);
+    component.set('selection', Ember.A([contentArray.objectAt(1)]));
+    component.set('add-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemAdd('3');
+  });
+});
+
 test('it sends remove-item action when an item is deselected in multiple mode', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, 2, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('multiple', true);
+    component.set('content', contentArray);
+    component.set('selection', Ember.A([contentArray.objectAt(1)]));
+    component.set('remove-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemRemove('2');
+  });
+});
+
+test('it sends remove-value action when an item is deselected in multiple mode', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
