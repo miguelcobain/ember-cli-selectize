@@ -135,15 +135,15 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
   </tr>
   <tr>
     <td valign="top"><code>create-item</code></td>
-    <td valign="top">sent when the user creates a tag. The text is sent as a parameter.</td>
+    <td valign="top">Sent when the user creates a tag. The text is sent as a parameter.</td>
   </tr>
   <tr>
     <td valign="top"><code>update-filter</code></td>
-    <td valign="top">sent when the user types in the input element (functional equivalent of observing <code>filter</code> property)</td>
+    <td valign="top">Sent when the user types in the input element (functional equivalent of observing <code>filter</code> property)</td>
   </tr>
   <tr>
     <td valign="top"><code>select-item</code> / <code>select-value</code></td>
-    <td valign="top">sent when the user selects an item (functional equivalent of observing <code>selection</code> property). The selected object is sent as a parameter. When the user deselects the option, parameter is <code>null</code>. `select-value` is identical, but gets the selected value passed in.</td>
+    <td valign="top">Sent when the user selects an item (functional equivalent of observing <code>selection</code> property). The selected object is sent as a parameter. When the user deselects the option, parameter is <code>null</code>. `select-value` is identical, but gets the selected value passed in.</td>
   </tr>
   <tr>
     <td valign="top"><code>add-item</code> / <code>add-value</code></td>
@@ -151,7 +151,19 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
   </tr>
   <tr>
     <td valign="top"><code>remove-item</code> / <code>remove-value</code></td>
-    <td valign="top">sent when the user deselects an item in multiple mode. The removed object is sent as a parameter. `remove-value` is identical, but gets the removed value passed in.</td>
+    <td valign="top">Sent when the user deselects an item in multiple mode. The removed object is sent as a parameter. `remove-value` is identical, but gets the removed value passed in.</td>
+  </tr>
+  <tr>
+    <td valign="top"><code>on-focus</code></td>
+    <td valign="top">Sent when the control gains focus.</td>
+  </tr>
+  <tr>
+    <td valign="top"><code>on-blur</code></td>
+    <td valign="top">Sent when the control loses focus.</td>
+  </tr>
+  <tr>
+    <td valign="top"><code>on-init</code></td>
+    <td valign="top">Sent once the control is completely initialized.</td>
   </tr>
 </table>
 
