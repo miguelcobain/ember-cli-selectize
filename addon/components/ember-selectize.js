@@ -32,7 +32,8 @@ export default Ember.Component.extend({
   value: computed('selection', {
     get: function() {
       var valuePath = this.get('_valuePath');
-      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+      var selection = this.get('selection');
+      return valuePath && selection ? Ember.get(selection, valuePath) : selection;
     },
     set: function(key, value) {
       return value;
@@ -279,7 +280,8 @@ export default Ember.Component.extend({
   },
 
  /**
-  * Update the selection value and send main action
+  * Update the selection value and send main actions
+  * In addition to emitting the selection object, a selection value is sent via `select-value` based on `optionValuePath`
   */
   _updateSelection: function(selection) {
     this.set('selection', selection);
@@ -288,20 +290,29 @@ export default Ember.Component.extend({
     Ember.run.schedule('actions', this, function() {
       var value = this.get('value');
       this.sendAction('select-item', selection, value);
+      this.sendAction('select-value', value);
     });
   },
   _addSelection: function(obj) {
+    var _valuePath = this.get('_valuePath');
+    var val = Ember.get(obj, _valuePath);
+
     this.get('selection').addObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('add-item', obj);
+      this.sendAction('add-value', val);
     });
   },
   _removeSelection: function(obj) {
+    let _valuePath = this.get('_valuePath');
+    let val = Ember.get(obj, _valuePath);
+
     this.get('selection').removeObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('remove-item', obj);
+      this.sendAction('remove-value', val);
     });
   },
   /**
