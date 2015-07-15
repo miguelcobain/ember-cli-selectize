@@ -319,17 +319,19 @@ export default Ember.Component.extend({
   * Ember observer triggered before the selection property is changed
   * We need to unbind any array observers if we're in multiple selection
   */
-  _selectionWillChange: Ember.beforeObserver(function() {
+  _selectionWillChange: Ember.observer(function() {
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
-    if (selection && isArray(selection) && multiple) {
-      selection.removeArrayObserver(this,  {
+    var oldSelection = this.get('oldSelection');
+    if (oldSelection && isArray(oldSelection) && multiple) {
+      oldSelection.removeArrayObserver(this,  {
         willChange: 'selectionArrayWillChange',
         didChange: 'selectionArrayDidChange'
       });
-      var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayWillChange(selection, 0, len);
+      var len = oldSelection ? get(oldSelection, 'length') : 0;
+      this.selectionArrayWillChange(oldSelection, 0, len);
     }
+
+    this.set('oldSelection', this.get('selection'));
   }, 'selection'),
   /**
   * Ember observer triggered when the selection property is changed
@@ -433,22 +435,23 @@ export default Ember.Component.extend({
   * Ember observer triggered before the content property is changed
   * We need to unbind any array observers
   */
-  _contentWillChange: Ember.beforeObserver(function() {
+  _contentWillChange: Ember.observer(function() {
     if (!this._selectize) {
       return;
     }
-    var content = this.get('content');
-    if (content) {
-      content.removeArrayObserver(this, {
+    var oldContent = this.get('oldContent');
+    if (oldContent) {
+      oldContent.removeArrayObserver(this, {
         willChange: 'contentArrayWillChange',
         didChange: 'contentArrayDidChange'
       });
     }
     //Trigger remove logic
-    var len = content ? get(content, 'length') : 0;
+    var len = oldContent ? get(oldContent, 'length') : 0;
     this._removing = true;
-    this.contentArrayWillChange(content, 0, len);
+    this.contentArrayWillChange(oldContent, 0, len);
     this._removing = false;
+    this.set('oldContent', this.get('content'));
   }, 'content'),
   /**
   * Ember observer triggered when the content property is changed
