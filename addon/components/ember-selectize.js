@@ -340,6 +340,7 @@ export default Ember.Component.extend({
 
     var multiple = this.get('multiple');
     var selection = this.get('selection');
+    var self = this;
 
     if (selection) {
       if (multiple) {
@@ -353,7 +354,17 @@ export default Ember.Component.extend({
         var len = selection ? get(selection, 'length') : 0;
         this.selectionArrayDidChange(selection, 0, null, len);
       } else {
-        this._selectize.addItem(get(selection, this.get('_valuePath')));
+        if (selection.then) {
+          selection.then(function (resolved) {
+            // Ensure that we don't overwrite new value
+            if (get(self, 'selection') === selection) {
+              self._selectize.addItem(get(resolved, self.get('_valuePath')));
+            }
+          });
+        } else {
+          this._selectize.addItem(get(selection, this.get('_valuePath')));
+        }
+
       }
 
     } else {

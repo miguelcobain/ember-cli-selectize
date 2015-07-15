@@ -612,3 +612,73 @@ test('it sends on-init', function(assert) {
 
   this.render();
 });
+
+test('having a selection creates selectize with a selection', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
+    component.set('selection', 'item 2');
+  });
+  this.render();
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ['item 2']);
+});
+
+test('selection can be set from a Promise when multiple=false', function(assert) {
+  assert.expect(2);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+
+  Ember.run(function() {
+    component.set('content', Ember.A([yehuda, tom]));
+    component.set('multiple', false);
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('selection', Ember.RSVP.Promise.resolve(tom));
+  });
+
+  this.render();
+
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ["2"]);
+});
+
+test('selection from a Promise don\'t overwrite newer selection once resolved, when multiple=false', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  var done = assert.async();
+
+  Ember.run(function() {
+    component.set('content', Ember.A([yehuda, tom, seb]));
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('multiple', false);
+    component.set('selection', new Ember.RSVP.Promise(function(resolve, reject) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(tom);
+        });
+        assert.deepEqual(component._selectize.items, ["3"], 'Should not select from Promise if newer selection');
+        done();
+      }, 40);
+    }));
+    component.set('selection', new Ember.RSVP.Promise(function(resolve, reject) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(seb);
+        });
+      }, 30);
+    }));
+  });
+
+  this.render();
+});
