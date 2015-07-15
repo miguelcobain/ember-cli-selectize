@@ -449,7 +449,6 @@ export default Ember.Component.extend({
     this._removing = true;
     this.contentArrayWillChange(content, 0, len);
     this._removing = false;
-    this._selectionDidChange();
   }, 'content'),
   /**
   * Ember observer triggered when the content property is changed
@@ -481,8 +480,6 @@ export default Ember.Component.extend({
     if (this._selectize) {
       this._selectize.refreshOptions(this._selectize.isFocused && !this._selectize.isInputHidden);
     }
-
-    this._selectionDidChange();
   },
   /*
   * Triggered after the content array changes
