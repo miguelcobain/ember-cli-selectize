@@ -180,12 +180,17 @@ export default Ember.Component.extend({
     if (!isNone(value)) { this._valueDidChange(); }
 
     this._loadingDidChange();
+    
+    //Setting up observers for changes to selection and content bindings (after the array observers are initialized).
+    Ember.addObserver(this, 'selection', '_selectionWillChange');
+    Ember.addObserver(this, 'content', '_contentWillChange');
+    
   },
 
   willDestroyElement: function() {
     //Unbind observers
-    this._contentWillChange();
-    this._selectionWillChange();
+    this._contentWillChange(this);
+    this._selectionWillChange(this);
 
     //Invoke Selectize's destroy
     this._selectize.destroy();
@@ -321,18 +326,18 @@ export default Ember.Component.extend({
   * Ember observer triggered before the selection property is changed
   * We need to unbind any array observers if we're in multiple selection
   */
-  _selectionWillChange: Ember.beforeObserver(function() {
-    var multiple = this.get('multiple');
-    var selection = this.get('selection');
+  _selectionWillChange: function(component) {
+    var multiple = component.get('multiple');
+    var selection = component.get('selection');
     if (selection && isArray(selection) && multiple) {
-      selection.removeArrayObserver(this,  {
+      selection.removeArrayObserver(component,  {
         willChange: 'selectionArrayWillChange',
         didChange: 'selectionArrayDidChange'
       });
       var len = selection ? get(selection, 'length') : 0;
-      this.selectionArrayWillChange(selection, 0, len);
+      component.selectionArrayWillChange(selection, 0, len);
     }
-  }, 'selection'),
+  },
   /**
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
@@ -424,24 +429,24 @@ export default Ember.Component.extend({
   * Ember observer triggered before the content property is changed
   * We need to unbind any array observers
   */
-  _contentWillChange: Ember.beforeObserver(function() {
-    if (!this._selectize) {
+  _contentWillChange: function(component) {
+    if (!component._selectize) {
       return;
     }
-    var content = this.get('content');
+    var content = component.get('content');
     if (content) {
-      content.removeArrayObserver(this, {
+      content.removeArrayObserver(component, {
         willChange: 'contentArrayWillChange',
         didChange: 'contentArrayDidChange'
       });
     }
     //Trigger remove logic
     var len = content ? get(content, 'length') : 0;
-    this._removing = true;
-    this.contentArrayWillChange(content, 0, len);
-    this._removing = false;
-    this._selectionDidChange();
-  }, 'content'),
+    component._removing = true;
+    component.contentArrayWillChange(content, 0, len);
+    component._removing = false;
+    component._selectionDidChange();
+  },
   /**
   * Ember observer triggered when the content property is changed
   * We need to bind an array observer to become notified of its changes
