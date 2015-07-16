@@ -158,6 +158,12 @@ export default Ember.Component.extend({
 
     return options;
   }),
+  
+  _setupSelectionObservers: function() {
+        //Setting up observers for changes to selection and content bindings (after the array observers are initialized).
+        Ember.addObserver(this, 'selection', '_selectionWillChange');
+        Ember.addObserver(this, 'content', '_contentWillChange');
+    }.on('init'),
 
   didInsertElement: function() {
     // ensure selectize is loaded
@@ -180,11 +186,6 @@ export default Ember.Component.extend({
     if (!isNone(value)) { this._valueDidChange(); }
 
     this._loadingDidChange();
-    
-    //Setting up observers for changes to selection and content bindings (after the array observers are initialized).
-    Ember.addObserver(this, 'selection', '_selectionWillChange');
-    Ember.addObserver(this, 'content', '_contentWillChange');
-    
   },
 
   willDestroyElement: function() {
