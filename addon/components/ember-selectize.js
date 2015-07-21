@@ -454,7 +454,7 @@ export default Ember.Component.extend({
   * Ember observer triggered when the content property is changed
   * We need to bind an array observer to become notified of its changes
   */
-  _contentDidChange: Ember.observer(function() {
+  _contentDidChange: Ember.observer('content', function() {
     if (!this._selectize) {
       return;
     }
@@ -467,7 +467,7 @@ export default Ember.Component.extend({
     }
     var len = content ? get(content, 'length') : 0;
     this.contentArrayDidChange(content, 0, null, len);
-  }, 'content'),
+  }),
   /*
   * Triggered before the content array changes
   * Here we process the removed elements
@@ -578,7 +578,7 @@ export default Ember.Component.extend({
   /*
   * Observer on the disabled property that enables or disables selectize.
   */
-  _disabledDidChange: Ember.observer(function() {
+  _disabledDidChange: Ember.observer('disabled', function() {
     if (!this._selectize) { return; }
     var disable = this.get('disabled');
     if (disable) {
@@ -586,21 +586,21 @@ export default Ember.Component.extend({
     } else {
       this._selectize.enable();
     }
-  }, 'disabled'),
+  }),
   /*
   * Observer on the placeholder property that updates selectize's placeholder.
   */
-  _placeholderDidChange: Ember.observer(function() {
+  _placeholderDidChange: Ember.observer('placeholder', function() {
     if (!this._selectize) { return; }
     var placeholder = this.get('placeholder');
     this._selectize.settings.placeholder = placeholder;
     this._selectize.updatePlaceholder();
-  }, 'placeholder'),
+  }),
   /*
   * Observer on the loading property.
   * Here we add/remove a css class, similarly to how selectize does.
   */
-  _loadingDidChange: Ember.observer(function() {
+  _loadingDidChange: Ember.observer('loading', function() {
     var loading = this.get('loading');
     var loadingClass = this.get('loadingClass');
     if (loading) {
@@ -608,7 +608,7 @@ export default Ember.Component.extend({
     } else {
       this._selectize.$wrapper.removeClass(loadingClass);
     }
-  }, 'loading'),
+  }),
 
   _templateToString: function(templateName, data) {
     var template = this.container.lookup('template:' + templateName);
