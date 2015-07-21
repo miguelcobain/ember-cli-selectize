@@ -32,7 +32,6 @@ test('multiple attribute is bound', function(assert) {
 });
 
 test('autocomplete attribute is bound and off', function(assert) {
-  var component = this.subject();
   assert.equal(this.$().attr('autocomplete'), 'off');
 });
 
@@ -80,7 +79,9 @@ var exampleObjectContent = function() {
 var objectSize = function(obj) {
   var size = 0; var key;
   for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
+    if (obj.hasOwnProperty(key)) {
+      size++;
+    }
   }
   return size;
 };
@@ -599,7 +600,7 @@ test('it sends on-init', function(assert) {
   var component = this.subject();
 
   var targetObject = {
-    externalAction: function(obj) {
+    externalAction: function() {
       assert.ok(true);
     }
   };
@@ -662,7 +663,7 @@ test('selection from a Promise don\'t overwrite newer selection once resolved, w
     component.set('optionValuePath', 'id');
     component.set('optionLabelPath', 'firstName');
     component.set('multiple', false);
-    component.set('selection', new Ember.RSVP.Promise(function(resolve, reject) {
+    component.set('selection', new Ember.RSVP.Promise(function(resolve) {
       Ember.run.later(function() {
         Ember.run(function() {
           resolve(tom);
@@ -671,7 +672,7 @@ test('selection from a Promise don\'t overwrite newer selection once resolved, w
         done();
       }, 40);
     }));
-    component.set('selection', new Ember.RSVP.Promise(function(resolve, reject) {
+    component.set('selection', new Ember.RSVP.Promise(function(resolve) {
       Ember.run.later(function() {
         Ember.run(function() {
           resolve(seb);
