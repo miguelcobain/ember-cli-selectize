@@ -185,8 +185,8 @@ export default Ember.Component.extend({
 
   willDestroyElement: function() {
     //Unbind observers
-    this._contentWillChange();
-    this._selectionWillChange();
+    this._contentWillChange(this.get('content'));
+    this._selectionWillChange(this.get('selection'));
 
     //Invoke Selectize's destroy
     this._selectize.destroy();
@@ -319,9 +319,8 @@ export default Ember.Component.extend({
   * Ember observer triggered before the selection property is changed
   * We need to unbind any array observers if we're in multiple selection
   */
-  _selectionWillChange: Ember.beforeObserver(function() {
+  _selectionWillChange(selection) {
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
     if (selection && isArray(selection) && multiple) {
       selection.removeArrayObserver(this,  {
         willChange: 'selectionArrayWillChange',
@@ -330,16 +329,22 @@ export default Ember.Component.extend({
       var len = selection ? get(selection, 'length') : 0;
       this.selectionArrayWillChange(selection, 0, len);
     }
-  }, 'selection'),
+  },
   /**
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
   _selectionDidChange: Ember.observer('selection', function() {
+
+    var selection = this.get('selection');
+    if (this._oldSelection !== selection) {
+      this._selectionWillChange(this._oldSelection);
+      this._oldSelection = selection;
+    }
+
     if (!this._selectize) { return; }
 
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
     var self = this;
 
     if (selection) {
@@ -433,11 +438,8 @@ export default Ember.Component.extend({
   * Ember observer triggered before the content property is changed
   * We need to unbind any array observers
   */
-  _contentWillChange: Ember.beforeObserver(function() {
-    if (!this._selectize) {
-      return;
-    }
-    var content = this.get('content');
+  _contentWillChange(content) {
+    if (!this._selectize) { return; }
     if (content) {
       content.removeArrayObserver(this, {
         willChange: 'contentArrayWillChange',
@@ -449,16 +451,21 @@ export default Ember.Component.extend({
     this._removing = true;
     this.contentArrayWillChange(content, 0, len);
     this._removing = false;
-  }, 'content'),
+  },
   /**
   * Ember observer triggered when the content property is changed
   * We need to bind an array observer to become notified of its changes
   */
   _contentDidChange: Ember.observer('content', function() {
-    if (!this._selectize) {
-      return;
-    }
+
     var content = this.get('content');
+    if (this._oldContent !== content) {
+      this._contentWillChange(this._oldContent);
+      this._oldContent = content;
+    }
+
+    if (!this._selectize) { return; }
+
     if (content) {
       content.addArrayObserver(this, {
         willChange: 'contentArrayWillChange',
