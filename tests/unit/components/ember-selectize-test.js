@@ -7,6 +7,7 @@ import {
 moduleForComponent('ember-selectize', 'Unit | Component | ember-selectize', {
   // Specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
+  unit: true
 });
 
 test('it renders', function(assert) {
@@ -32,7 +33,6 @@ test('multiple attribute is bound', function(assert) {
 });
 
 test('autocomplete attribute is bound and off', function(assert) {
-  var component = this.subject();
   assert.equal(this.$().attr('autocomplete'), 'off');
 });
 
@@ -80,7 +80,9 @@ var exampleObjectContent = function() {
 var objectSize = function(obj) {
   var size = 0; var key;
   for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
+    if (obj.hasOwnProperty(key)) {
+      size++;
+    }
   }
   return size;
 };
@@ -375,6 +377,32 @@ test('it sends select-item action when an item is selected', function(assert) {
   });
 });
 
+test('it sends select-value action when an item is selected', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, 1);
+    }
+  };
+
+  Ember.run(function() {
+    component.set('content', contentArray);
+    component.set('select-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemAdd('1');
+  });
+});
+
 test('it sends select-item action when an item is deselected', function(assert) {
   assert.expect(1);
 
@@ -397,6 +425,33 @@ test('it sends select-item action when an item is deselected', function(assert) 
 
   Ember.run(function() {
     component._onItemRemove('item 1');
+  });
+});
+
+test('it sends select-value action when an item is deselected', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, null, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('content', contentArray);
+    component.set('selection', contentArray.objectAt(0));
+    component.set('select-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemRemove('1');
   });
 });
 
@@ -426,7 +481,63 @@ test('it sends add-item action when an item is selected in multiple mode', funct
   });
 });
 
+test('it sends add-value action when an item is selected in multiple mode', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(obj) {
+      assert.equal(obj, 3, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('multiple', true);
+    component.set('content', contentArray);
+    component.set('selection', Ember.A([contentArray.objectAt(1)]));
+    component.set('add-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemAdd('3');
+  });
+});
+
 test('it sends remove-item action when an item is deselected in multiple mode', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var contentArray = exampleObjectContent();
+
+  var targetObject = {
+    externalAction: function(value) {
+      assert.equal(value, 2, 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('multiple', true);
+    component.set('content', contentArray);
+    component.set('selection', Ember.A([contentArray.objectAt(1)]));
+    component.set('remove-value', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('optionValuePath', 'id');
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onItemRemove('2');
+  });
+});
+
+test('it sends remove-value action when an item is deselected in multiple mode', function(assert) {
   assert.expect(1);
 
   var component = this.subject();
@@ -490,7 +601,7 @@ test('it sends on-init', function(assert) {
   var component = this.subject();
 
   var targetObject = {
-    externalAction: function(obj) {
+    externalAction: function() {
       assert.ok(true);
     }
   };
@@ -499,6 +610,76 @@ test('it sends on-init', function(assert) {
     component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
     component.set('on-init', 'externalAction');
     component.set('targetObject', targetObject);
+  });
+
+  this.render();
+});
+
+test('having a selection creates selectize with a selection', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3']));
+    component.set('selection', 'item 2');
+  });
+  this.render();
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ['item 2']);
+});
+
+test('selection can be set from a Promise when multiple=false', function(assert) {
+  assert.expect(2);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+
+  Ember.run(function() {
+    component.set('content', Ember.A([yehuda, tom]));
+    component.set('multiple', false);
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('selection', Ember.RSVP.Promise.resolve(tom));
+  });
+
+  this.render();
+
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ["2"]);
+});
+
+test('selection from a Promise don\'t overwrite newer selection once resolved, when multiple=false', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  var done = assert.async();
+
+  Ember.run(function() {
+    component.set('content', Ember.A([yehuda, tom, seb]));
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('multiple', false);
+    component.set('selection', new Ember.RSVP.Promise(function(resolve) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(tom);
+        });
+        assert.deepEqual(component._selectize.items, ["3"], 'Should not select from Promise if newer selection');
+        done();
+      }, 40);
+    }));
+    component.set('selection', new Ember.RSVP.Promise(function(resolve) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(seb);
+        });
+      }, 30);
+    }));
   });
 
   this.render();
