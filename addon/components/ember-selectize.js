@@ -642,10 +642,9 @@ export default Ember.Component.extend({
       throw new TypeError('template ' + templateName + ' does not exist.');
     }
 
-    var view = Ember.View.create({
-      template: template,
-      controller: data,
-      container: this.get('container')
+    var view = Ember.Component.create({
+      layout: template,
+      model: data
     });
 
     return this._getStringFromView(view);
