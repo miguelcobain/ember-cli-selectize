@@ -134,7 +134,6 @@ export default Ember.Component.extend({
       create: allowCreate ? Ember.run.bind(this, '_create') : false,
       onItemAdd: Ember.run.bind(this, '_onItemAdd'),
       onItemRemove: Ember.run.bind(this, '_onItemRemove'),
-      onItemAdd: Ember.run.bind(this, '_onItemAdd'),
       onChange: Ember.run.bind(this, '_onChange'),
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
