@@ -154,6 +154,10 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
     <td valign="top">Sent when the user deselects an item in multiple mode. The removed object is sent as a parameter. `remove-value` is identical, but gets the removed value passed in.</td>
   </tr>
   <tr>
+    <td valign="top"><code>reorder-items</code></td>
+    <td valign="top">Sent when the user reorders a list of items in multiple mode. The reordered list of items is sent as a parameter</td>
+  </tr>
+  <tr>
     <td valign="top"><code>on-focus</code></td>
     <td valign="top">Sent when the control gains focus.</td>
   </tr>
