@@ -283,7 +283,6 @@ test('updating a selection updates selectize value', function(assert) {
 
 test('reorder a selection updates selectize value', function(assert) {
   var component = this.subject();
-  var content = exampleObjectContent();
   Ember.run(function() {
     component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
     component.set('selection', Ember.A(['item 2', 'item 3']));
