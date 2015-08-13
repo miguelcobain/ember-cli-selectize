@@ -16,6 +16,7 @@ export default Ember.Component.extend({
   maxItems: Ember.computed('multiple', function() {
     return this.get('multiple') ? null : 1;
   }),
+
   // Allows to use prompt (like in Ember.Select) or placeholder property
   placeholder: Ember.computed.alias('prompt'),
   sortField: null,
@@ -31,11 +32,12 @@ export default Ember.Component.extend({
 
   selection: null,
   value: computed('selection', {
-    get: function() {
+    get() {
       var valuePath = this.get('_valuePath');
-      return valuePath ? this.get('selection.' + valuePath) : this.get('selection');
+      var selection = this.get('selection');
+      return valuePath && selection ? Ember.get(selection, valuePath) : selection;
     },
-    set: function(key, value) {
+    set(key, value) {
       return value;
     }
   }),
@@ -114,6 +116,7 @@ export default Ember.Component.extend({
   _valuePath: computed('optionValuePath', function() {
     return this.get('optionValuePath').replace(/^content\.?/, '');
   }),
+
   _labelPath: computed('optionLabelPath', function() {
     return this.get('optionLabelPath').replace(/^content\.?/, '');
   }),
@@ -186,7 +189,7 @@ export default Ember.Component.extend({
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
-      this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(function(item) { return item.trim(); });
+      this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(item => item.trim());
     }
 
     var options = {
@@ -200,7 +203,11 @@ export default Ember.Component.extend({
       onItemRemove: Ember.run.bind(this, '_onItemRemove'),
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
-      placeholder: this.get('placeholder')
+      placeholder: this.get('placeholder'),
+      onBlur: this._registerAction('on-blur'),
+      onFocus: this._registerAction('on-focus'),
+      onInitialize: this._registerAction('on-init'),
+      onClear: this._registerAction('on-clear')
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
@@ -210,16 +217,16 @@ export default Ember.Component.extend({
                           'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab'];
 
-    generalOptions.forEach(Ember.run.bind(this, function(option) {
+    generalOptions.forEach(function(option) {
       options[option] = this.get(option);
-    }));
+    }, this);
 
     options = this._mergeSortField(options);
 
     return options;
   }),
 
-  didInsertElement: function() {
+  didInsertElement() {
     // ensure selectize is loaded
     Ember.assert('selectize has to be loaded', typeof this.$().selectize === 'function');
 
@@ -243,10 +250,10 @@ export default Ember.Component.extend({
     this._loadingDidChange();
   },
 
-  willDestroyElement: function() {
+  willDestroyElement() {
     //Unbind observers
-    this._contentWillChange();
-    this._selectionWillChange();
+    this._contentWillChange(this.get('content'));
+    this._selectionWillChange(this.get('selection'));
 
     //Invoke Selectize's destroy
     this._selectize.destroy();
@@ -254,10 +261,11 @@ export default Ember.Component.extend({
     //We are no longer in DOM
     this._selectize = null;
   },
+
   /**
   * Event callback that is triggered when user creates a tag
   */
-  _create: function(input, callback) {
+  _create(input, callback) {
     // Delete user entered text
     this._selectize.setTextboxValue('');
     // Send create action
@@ -270,21 +278,34 @@ export default Ember.Component.extend({
     // in the content and selection property
     callback(null);
   },
+
+  /**
+  * Event callback for DOM events
+  */
+  _registerAction(action){
+    return Ember.run.bind(this, function() {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(action);
+      this.sendAction.apply(this, args);
+    });
+  },
+
   /**
   * Event callback that is triggered when user types in the input element
   */
-  _onType: function(str) {
+  _onType(str) {
     this.set('filter', str);
     Ember.run.schedule('actions', this, function() {
       this.sendAction('update-filter', str);
     });
   },
+
   /**
   * Event callback triggered when an item is added (when something is selected)
   * Here we need to update our selection property (if single selection) or array (if multiple selection)
   * We also send an action
   */
-  _onItemAdd: function(value) {
+  _onItemAdd(value) {
     var content = this.get('content');
     var selection = this.get('selection');
     var multiple = this.get('multiple');
@@ -303,15 +324,15 @@ export default Ember.Component.extend({
       }
     }
   },
+
   /**
   * Event callback triggered when an item is removed (when something is deselected)
   * Here we need to update our selection property (if single selection, here set to null) or remove item from array (if multiple selection)
   */
-  _onItemRemove: function(value) {
+  _onItemRemove(value) {
     //in order to know if this event was triggered by observers or if it came from user interaction
-    if (this._removing) {
-      return;
-    }
+    if (this._removing) { return; }
+
     var content = this.get('content');
     var selection = this.get('selection');
     var multiple = this.get('multiple');
@@ -328,38 +349,50 @@ export default Ember.Component.extend({
   },
 
  /**
-  * Update the selection value and send main action
+  * Update the selection value and send main actions
+  * In addition to emitting the selection object, a selection value is sent via `select-value` based on `optionValuePath`
   */
-  _updateSelection: function(selection) {
+  _updateSelection(selection) {
     this.set('selection', selection);
 
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
       var value = this.get('value');
       this.sendAction('select-item', selection, value);
+      this.sendAction('select-value', value);
     });
   },
-  _addSelection: function(obj) {
+
+  _addSelection(obj) {
+    var _valuePath = this.get('_valuePath');
+    var val = Ember.get(obj, _valuePath);
+
     this.get('selection').addObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('add-item', obj);
+      this.sendAction('add-value', val);
     });
   },
-  _removeSelection: function(obj) {
+
+  _removeSelection(obj) {
+    let _valuePath = this.get('_valuePath');
+    let val = Ember.get(obj, _valuePath);
+
     this.get('selection').removeObject(obj);
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('remove-item', obj);
+      this.sendAction('remove-value', val);
     });
   },
+
   /**
   * Ember observer triggered before the selection property is changed
   * We need to unbind any array observers if we're in multiple selection
   */
-  _selectionWillChange: Ember.beforeObserver(function() {
+  _selectionWillChange(selection) {
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
     if (selection && isArray(selection) && multiple) {
       selection.removeArrayObserver(this,  {
         willChange: 'selectionArrayWillChange',
@@ -368,16 +401,23 @@ export default Ember.Component.extend({
       var len = selection ? get(selection, 'length') : 0;
       this.selectionArrayWillChange(selection, 0, len);
     }
-  }, 'selection'),
+  },
   /**
   * Ember observer triggered when the selection property is changed
   * We need to bind an array observer when selection is multiple
   */
   _selectionDidChange: Ember.observer('selection', function() {
+
+    var selection = this.get('selection');
+    if (this._oldSelection !== selection) {
+      this._selectionWillChange(this._oldSelection);
+      this._oldSelection = selection;
+    }
+
     if (!this._selectize) { return; }
 
     var multiple = this.get('multiple');
-    var selection = this.get('selection');
+    var self = this;
 
     if (selection) {
       if (multiple) {
@@ -391,7 +431,17 @@ export default Ember.Component.extend({
         var len = selection ? get(selection, 'length') : 0;
         this.selectionArrayDidChange(selection, 0, null, len);
       } else {
-        this._selectize.addItem(get(selection, this.get('_valuePath')));
+        if (selection.then) {
+          selection.then(function (resolved) {
+            // Ensure that we don't overwrite new value
+            if (get(self, 'selection') === selection) {
+              self._selectize.addItem(get(resolved, self.get('_valuePath')));
+            }
+          });
+        } else {
+          this._selectize.addItem(get(selection, this.get('_valuePath')));
+        }
+
       }
 
     } else {
@@ -424,47 +474,48 @@ export default Ember.Component.extend({
   * Triggered before the selection array changes
   * Here we process the removed elements
   */
-  selectionArrayWillChange: function(array, idx, removedCount) {
+  selectionArrayWillChange(array, idx, removedCount) {
     this._removing = true;
     for (var i = idx; i < idx + removedCount; i++) {
       this.selectionObjectWasRemoved(array.objectAt(i));
     }
     this._removing = false;
   },
+
   /*
   * Triggered after the selection array changes
   * Here we process the inserted elements
   */
-  selectionArrayDidChange: function(array, idx, removedCount, addedCount) {
+  selectionArrayDidChange(array, idx, removedCount, addedCount) {
     for (var i = idx; i < idx + addedCount; i++) {
       this.selectionObjectWasAdded(array.objectAt(i), i);
     }
   },
+
   /*
   * Function that is responsible for Selectize's item inserting logic
   */
-  selectionObjectWasAdded: function(obj) {
+  selectionObjectWasAdded(obj) {
     if (this._selectize) {
       this._selectize.addItem(get(obj, this.get('_valuePath')));
     }
   },
+
   /*
   * Function that is responsible for Selectize's item removing logic
   */
-  selectionObjectWasRemoved: function(obj) {
+  selectionObjectWasRemoved(obj) {
     if (this._selectize) {
       this._selectize.removeItem(get(obj, this.get('_valuePath')));
     }
   },
+
   /**
   * Ember observer triggered before the content property is changed
   * We need to unbind any array observers
   */
-  _contentWillChange: Ember.beforeObserver(function() {
-    if (!this._selectize) {
-      return;
-    }
-    var content = this.get('content');
+  _contentWillChange(content) {
+    if (!this._selectize) { return; }
     if (content) {
       content.removeArrayObserver(this, {
         willChange: 'contentArrayWillChange',
@@ -476,17 +527,21 @@ export default Ember.Component.extend({
     this._removing = true;
     this.contentArrayWillChange(content, 0, len);
     this._removing = false;
-    this._selectionDidChange();
-  }, 'content'),
+  },
+
   /**
   * Ember observer triggered when the content property is changed
   * We need to bind an array observer to become notified of its changes
   */
   _contentDidChange: Ember.observer('content', function() {
-    if (!this._selectize) {
-      return;
-    }
     var content = this.get('content');
+    if (this._oldContent !== content) {
+      this._contentWillChange(this._oldContent);
+      this._oldContent = content;
+    }
+
+    if (!this._selectize) { return; }
+
     if (content) {
       content.addArrayObserver(this, {
         willChange: 'contentArrayWillChange',
@@ -496,11 +551,12 @@ export default Ember.Component.extend({
     var len = content ? get(content, 'length') : 0;
     this.contentArrayDidChange(content, 0, null, len);
   }),
+
   /*
   * Triggered before the content array changes
   * Here we process the removed elements
   */
-  contentArrayWillChange: function(array, idx, removedCount) {
+  contentArrayWillChange(array, idx, removedCount) {
     for (var i = idx; i < idx + removedCount; i++) {
       this.objectWasRemoved(array.objectAt(i));
     }
@@ -508,14 +564,13 @@ export default Ember.Component.extend({
     if (this._selectize) {
       this._selectize.refreshOptions(this._selectize.isFocused && !this._selectize.isInputHidden);
     }
-
-    this._selectionDidChange();
   },
+
   /*
   * Triggered after the content array changes
   * Here we process the inserted elements
   */
-  contentArrayDidChange: function(array, idx, removedCount, addedCount) {
+  contentArrayDidChange(array, idx, removedCount, addedCount) {
     for (var i = idx; i < idx + addedCount; i++) {
       this.objectWasAdded(array.objectAt(i));
       this.addLabelObserver(array.objectAt(i));
@@ -527,13 +582,14 @@ export default Ember.Component.extend({
 
     this._selectionDidChange();
   },
+
   /*
   * Function that is responsible for Selectize's option inserting logic
   * If the option is an object or Ember instance, we set an observer on the label value of it.
   * This way, we can later update the label of it.
   * Useful for dealing with objects that 'lazy load' some properties/relationships.
   */
-  objectWasAdded: function(obj) {
+  objectWasAdded(obj) {
     var data = {};
     var sortField = this.get('sortField');
 
@@ -574,16 +630,18 @@ export default Ember.Component.extend({
       this._selectize.addOption(data);
     }
   },
-  addLabelObserver: function(obj) {
+
+  addLabelObserver(obj) {
     //Only attach observer if the label is a property of an object
     if (typeOf(obj) === 'object' || typeOf(obj) === 'instance') {
       Ember.addObserver(obj, this.get('_labelPath'), this, '_labelDidChange');
     }
   },
+
   /*
   * Function that is responsible for Selectize's option removing logic
   */
-  objectWasRemoved: function(obj) {
+  objectWasRemoved(obj) {
     if (typeOf(obj) === 'object' || typeOf(obj) === 'instance') {
       Ember.removeObserver(obj, this.get('_labelPath'), this, '_labelDidChange');
     }
@@ -591,11 +649,12 @@ export default Ember.Component.extend({
       this._selectize.removeOption(get(obj, this.get('_valuePath')));
     }
   },
+
   /*
   * Ember Observer that triggers when an option's label changes.
   * Here we need to update its corresponding option with the new data
   */
-  _labelDidChange: function(sender) {
+  _labelDidChange(sender) {
     if (!this._selectize) { return; }
     var data = {
       label: get(sender, this.get('_labelPath')),
@@ -609,6 +668,7 @@ export default Ember.Component.extend({
       this.objectWasAdded(sender);
     }
   },
+
   /*
   * Observer on the disabled property that enables or disables selectize.
   */
@@ -621,6 +681,7 @@ export default Ember.Component.extend({
       this._selectize.enable();
     }
   }),
+
   /*
   * Observer on the placeholder property that updates selectize's placeholder.
   */
@@ -630,6 +691,7 @@ export default Ember.Component.extend({
     this._selectize.settings.placeholder = placeholder;
     this._selectize.updatePlaceholder();
   }),
+
   /*
   * Observer on the loading property.
   * Here we add/remove a css class, similarly to how selectize does.
@@ -644,7 +706,7 @@ export default Ember.Component.extend({
     }
   }),
 
-  _templateToString: function(templateName, data) {
+  _templateToString(templateName, data) {
     var template = this.container.lookup('template:' + templateName);
 
     if (!template) {
@@ -660,7 +722,8 @@ export default Ember.Component.extend({
 
     return this._getStringFromView(view);
   },
-  _viewToString: function(viewName, data) {
+
+  _viewToString(viewName, data) {
     var viewClass = this.container.lookup('view:' + viewName);
 
     if (!viewClass) {
@@ -674,17 +737,18 @@ export default Ember.Component.extend({
 
     return this._getStringFromView(view);
   },
+
   /*
   * Encapsulates the logic of converting a view to a string
   */
   //FIX ME: this method does not work in Ember 1.8.0
   //see http://git.io/VUYZ4g for more info
-  _getStringFromView: function(view) {
+  _getStringFromView(view) {
     view.createElement();
     return view.element.outerHTML;
   },
 
-  _mergeSortField: function(options) {
+  _mergeSortField(options) {
     var sortField = this.get('sortField');
     if (sortField) {
       var sortArray = this._getSortArray(sortField);
@@ -693,7 +757,7 @@ export default Ember.Component.extend({
     return options;
   },
 
-  _getSortArray: function(sortField) {
+  _getSortArray(sortField) {
     if (isArray(sortField)) {
       return sortField;
     } else {

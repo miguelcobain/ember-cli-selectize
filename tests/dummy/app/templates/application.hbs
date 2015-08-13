@@ -3,7 +3,7 @@
 <h3>Normal usage with strings</h3>
 <p>
   {{ember-selectize
-    content=controller.names
+    content=names
     selection=name
     placeholder="Select a name" }}
 </p>
@@ -12,7 +12,7 @@
 <h3>Normal usage with objects + <code>selection</code></h3>
 <p>
   {{ember-selectize
-    content=controller.items
+    content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
     selection=item
@@ -24,10 +24,10 @@
 <h3>Normal usage with objects + <code>value</code></h3>
 <p>
   {{ember-selectize
-    content=controller.items
+    content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
-    value=controller.itemValue
+    value=itemValue
     create-item="createAction"
     placeholder="Select an item" }}
 </p>
@@ -40,20 +40,20 @@
 <p>
   {{ember-selectize
     multiple=true
-    content=controller.items
+    content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
     selection=itemValues
     create="createAction"
     placeholder="Select an item" }}
 </p>
-<p>Selected: <ul>{{#each v in itemValues}}<li>{{v.label}}</li>{{/each}}</ul></p>
+<p>Selected: <ul>{{#each itemValues as |v|}}<li>{{v.label}}</li>{{/each}}</ul></p>
 
 <h3>Multiple usage with objects + <code>optionFunction</code> rendering</h3>
 <p>
   {{ember-selectize
     multiple=true
-    content=controller.items
+    content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
     selection=itemValues
@@ -61,7 +61,7 @@
     optionFunction=getOption
     placeholder="Select an item" }}
 </p>
-<p>Selected: <ul>{{#each v in itemValues}}<li>{{v.label}}</li>{{/each}}</ul></p>
+<p>Selected: <ul>{{#each itemValues as |v|}}<li>{{v.label}}</li>{{/each}}</ul></p>
 
 {{!--
 
@@ -70,7 +70,7 @@ See: https://github.com/emberjs/ember.js/issues/5534#issuecomment-81818954
 <h3><code>optionTemplate</code> usage example</h3>
 <p>
   {{ember-selectize
-    content=controller.items
+    content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
     selection=item
