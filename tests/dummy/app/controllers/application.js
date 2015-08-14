@@ -74,7 +74,8 @@ export default Ember.Controller.extend({
       title: '#3 This title will appear on select'
     }
   ]),
-  lastId: 3,
+  lastPostId: 3,
+  lastPostGroupedId: 3,
 
   actions:{
     createAction:function(str){
@@ -90,18 +91,19 @@ export default Ember.Controller.extend({
     },
 
     addPost: function() {
-      this.incrementProperty('lastId');
+      this.incrementProperty('lastPostId');
       this.get('posts').addObject({
-        id: this.get('lastId'),
+        id: this.get('lastPostId'),
         category: 'Another 2',
-        title: '#' + this.get('lastId') + ' This title will appear on select'
+        title: '#' + this.get('lastPostId') + ' This title will appear on select'
       });
     },
 
     addPostGrouped: function() {
+      this.incrementProperty('lastPostGroupedId');
       this.get('groupedContent').findBy('label', 'Another').get('content').addObject({
-        id: this.get('lastId'),
-        title: '#' + this.get('lastId') + ' This title will appear on select'
+        id: this.get('lastPostGroupedId'),
+        title: '#' + this.get('lastPostGroupedId') + ' This title will appear on select'
       });
     }
   }

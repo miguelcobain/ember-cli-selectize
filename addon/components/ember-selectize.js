@@ -233,6 +233,9 @@ export default Ember.Component.extend({
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
     this._optgroupsDidChange();
+    if(this.get('groupedContent')) {
+      this._groupedContentDidChange();
+    }
     this._contentDidChange();
 
     var selection = this.get('selection');
@@ -526,6 +529,43 @@ export default Ember.Component.extend({
     }
 
     this._selectionDidChange();
+  },
+  /**
+  * Ember observer triggered when the groupedContent property is changed
+  * We need to bind an array observer to become notified of each group's array changes,
+  * then notify that the parent array has changed. This is because computed properties
+  * have trouble with nested array changes. 
+  */
+  _groupedContentDidChange: Ember.observer('groupedContent', function() {
+    if (!this._selectize) {
+      return;
+    }
+    var groupedContent = this.get('groupedContent');
+    if (Ember.isEmpty(groupedContent)) { return; }
+
+    var willChangeWrapper = Ember.run.bind(this, function() { this.groupedContentArrayWillChange.apply(this, arguments); });
+    var didChangeWrapper = Ember.run.bind(this, function() { this.groupedContentArrayDidChange.apply(this, arguments); });
+
+    groupedContent.forEach(function(group) {
+      group.get('content').addArrayObserver(this, {
+        willChange: willChangeWrapper,
+        didChange: didChangeWrapper,
+      });
+    });
+    var len = groupedContent ? get(groupedContent, 'length') : 0;
+    this.groupedContentArrayDidChange(groupedContent, 0, null, len);
+  }),
+  /*
+  * Triggered before the grouped content array changes
+  * Here we process the removed elements
+  */
+  groupedContentArrayWillChange: Ember.K,
+  /*
+  * Triggered after the grouped content array changes
+  * Here we process the inserted elements
+  */
+  groupedContentArrayDidChange: function() {
+    this.notifyPropertyChange('groupedContent.@each');
   },
   /*
   * Function that is responsible for Selectize's option inserting logic
