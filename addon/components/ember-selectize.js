@@ -13,12 +13,12 @@ export default Ember.Component.extend({
 
   autocomplete: 'off',
   multiple: false,
-  maxItems: Ember.computed('multiple', function() {
+  maxItems: computed('multiple', function() {
     return this.get('multiple') ? null : 1;
   }),
 
   // Allows to use prompt (like in Ember.Select) or placeholder property
-  placeholder: Ember.computed.alias('prompt'),
+  placeholder: computed.alias('prompt'),
   sortField: null,
   sortDirection: 'asc',
   tagName: 'select',
@@ -71,13 +71,13 @@ export default Ember.Component.extend({
     if (!groupedContent) { return; }
 
     //concatenate all content properties in each group
-    return groupedContent.reduce(function(previousValue, group) {
+    return groupedContent.reduce((previousValue, group) => {
       var content = get(group, 'content') || Ember.A();
       var groupLabel = get(group, 'label');
 
       //create proxies for each object. Selectize requires the group value to be
       //set in the object. Use ObjectProxy to keep original object intact.
-      var proxiedContent = content.map(function(item) {
+      var proxiedContent = content.map(item => {
         var proxy = { content: item };
         proxy[_this.get('_groupPath')] = groupLabel;
         return Ember.ObjectProxy.create(proxy);
@@ -99,7 +99,7 @@ export default Ember.Component.extend({
     if (!optgroups) { return; }
 
     var _this = this;
-    optgroups.forEach(function(group) {
+    optgroups.forEach(group => {
       _this._selectize.addOptionGroup(group, { label: group, value: group});
     });
   }),
@@ -240,6 +240,9 @@ export default Ember.Component.extend({
     //We trigger all the observers manually to account for those changes.
     this._disabledDidChange();
     this._optgroupsDidChange();
+    if(this.get('groupedContent')) {
+      this._groupedContentDidChange();
+    }
     this._contentDidChange();
 
     var selection = this.get('selection');
@@ -254,6 +257,7 @@ export default Ember.Component.extend({
     //Unbind observers
     this._contentWillChange(this.get('content'));
     this._selectionWillChange(this.get('selection'));
+    this._groupedContentWillChange(this.get('groupedContent'));
 
     //Invoke Selectize's destroy
     this._selectize.destroy();
@@ -581,6 +585,63 @@ export default Ember.Component.extend({
     }
 
     this._selectionDidChange();
+  },
+
+  _groupedContentWillChange(groupedContent) {
+    if (!this._selectize) { return; }
+    if (Ember.isEmpty(groupedContent)) { return; }
+
+    groupedContent.forEach(group => {
+      group.get('content').removeArrayObserver(this, {
+        willChange: '_groupedContentArrayWillChange',
+        didChange: '_groupedContentArrayDidChange',
+      });
+    });
+  },
+
+  /**
+  * Ember observer triggered when the groupedContent property is changed
+  * We need to bind an array observer to become notified of each group's array changes,
+  * then notify that the parent array has changed. This is because computed properties
+  * have trouble with nested array changes.
+  */
+  _groupedContentDidChange: Ember.observer('groupedContent', function() {
+    var groupedContent = this.get('groupedContent');
+    if (this._oldGroupedContent !== groupedContent) {
+      this._groupedContentWillChange(this._oldGroupedContent);
+      this._oldGroupedContent = groupedContent;
+    }
+
+    if (!this._selectize) {
+      return;
+    }
+    if (Ember.isEmpty(groupedContent)) { return; }
+
+    //var willChangeWrapper = Ember.run.bind(this, function() { this.groupedContentArrayWillChange.apply(this, arguments); });
+    //var didChangeWrapper = Ember.run.bind(this, function() { this.groupedContentArrayDidChange.apply(this, arguments); });
+
+    groupedContent.forEach(group => {
+      group.get('content').addArrayObserver(this, {
+        willChange: '_groupedContentArrayWillChange',
+        didChange: '_groupedContentArrayDidChange',
+      });
+    });
+    var len = groupedContent ? get(groupedContent, 'length') : 0;
+    this._groupedContentArrayDidChange(groupedContent, 0, null, len);
+  }),
+
+  /*
+  * Triggered before the grouped content array changes
+  * Here we process the removed elements
+  */
+  _groupedContentArrayWillChange: Ember.K,
+
+  /*
+  * Triggered after the grouped content array changes
+  * Here we process the inserted elements
+  */
+  _groupedContentArrayDidChange() {
+    this.notifyPropertyChange('groupedContent.@each');
   },
 
   /*
