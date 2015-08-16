@@ -77,6 +77,52 @@ var exampleObjectContent = function() {
   ]);
 };
 
+var exampleGroupedContent = function() {
+  return Ember.A([
+    Ember.Object.create({
+      label: 'Nature',
+      content: Ember.A([
+        {
+          id: 1,
+          title: 'This title will appear on select'
+        },
+        {
+          id: 2,
+          title: 'This title will appear on select'
+        }
+      ])
+    }),
+    Ember.Object.create({
+      label: 'Another',
+      content: Ember.A([
+        {
+          id: 3,
+          title: 'This title will appear on select'
+        }
+      ])
+    })
+  ]);
+};
+var exampleGroupPathContent = function() {
+  return Ember.A([
+    {
+      id: 1,
+      category: 'Nature',
+      title: '#1 This title will appear on select'
+    },
+    {
+      id: 2,
+      category: 'Nature',
+      title: '#2 This title will appear on select'
+    },
+    {
+      id: 3,
+      category: 'Another',
+      title: '#3 This title will appear on select'
+    }
+  ]);
+};
+
 var objectSize = function(obj) {
   var size = 0; var key;
   for (key in obj) {
@@ -221,6 +267,205 @@ test('replacing content updates selectize options', function(assert) {
 
   assert.equal(objectSize(component._selectize.options), 1);
   assert.deepEqual(asArray(component._selectize.options, 'label'), ['item 1']);
+});
+
+test('setting initial groupedContent shows correct number of options and optgroups', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+});
+
+test('adding to groupedContent parent array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('groupedContent').addObject(Ember.Object.create({
+      label: 'Third Group',
+      content: Ember.A([
+        {
+          id: 3,
+          title: 'This title will appear on select'
+        }
+      ])
+    }));
+  });
+
+  assert.equal(objectSize(component._selectize.options), 4);
+  assert.equal(objectSize(component._selectize.optgroups), 3);
+});
+
+test('removing from groupedContent parent array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('groupedContent').popObject();
+  });
+
+  assert.equal(objectSize(component._selectize.options), 2);
+  assert.equal(objectSize(component._selectize.optgroups), 1);
+});
+
+test('replacing groupedContent parent array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    var _newGroupedContent = exampleGroupedContent();
+    _newGroupedContent.addObject(Ember.Object.create({
+      label: 'Third Group',
+      content: Ember.A([
+        {
+          id: 3,
+          title: 'This title will appear on select'
+        }
+      ])
+    }));
+    component.set('groupedContent', _newGroupedContent);
+  });
+
+  assert.equal(objectSize(component._selectize.options), 4);
+  assert.equal(objectSize(component._selectize.optgroups), 3);
+});
+
+test('adding to groupedContent child array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('groupedContent').findBy('label', 'Another').get('content').addObject({
+      id: 3,
+      title: 'new item'
+    });
+  });
+
+  assert.equal(objectSize(component._selectize.options), 4);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+});
+
+test('removing from groupedContent child array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('groupedContent').findBy('label', 'Nature').get('content').popObject();
+  });
+
+  assert.equal(objectSize(component._selectize.options), 2);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+});
+
+test('replacing groupedContent child array updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('groupedContent', exampleGroupedContent());
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    var _newGroupedContent = exampleGroupedContent();
+    _newGroupedContent.findBy('label', 'Nature').get('content').popObject();
+    component.set('content', _newGroupedContent);
+  });
+
+  assert.equal(objectSize(component._selectize.options), 2);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+});
+
+
+test('setting initial content with optionGroupPath shows correct number of options and optgroups', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.setProperties({
+      optionValuePath: 'content.id',
+      optionLabelPath: 'content.title',
+      optionGroupPath: 'content.category',
+      content: exampleGroupPathContent()
+    });
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+});
+
+test('adding to content with optionGroupPath updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.setProperties({
+      optionValuePath: 'content.id',
+      optionLabelPath: 'content.title',
+      optionGroupPath: 'content.category',
+      content: exampleGroupPathContent()
+    });
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('content').addObject({
+      id: 4,
+      category: 'Third Group',
+      title: 'this title will appear on select'
+    });
+  });
+
+  assert.equal(objectSize(component._selectize.options), 4);
+  assert.equal(objectSize(component._selectize.optgroups), 3);
+});
+
+test('removing from content with optionGroupPath updates selectize options', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.setProperties({
+      optionValuePath: 'content.id',
+      optionLabelPath: 'content.title',
+      optionGroupPath: 'content.category',
+      content: exampleGroupPathContent()
+    });
+  });
+  this.render();
+  assert.equal(objectSize(component._selectize.options), 3);
+  assert.equal(objectSize(component._selectize.optgroups), 2);
+
+  Ember.run(function() {
+    component.get('content').popObject();
+  });
+
+  assert.equal(objectSize(component._selectize.options), 2);
+  assert.equal(objectSize(component._selectize.optgroups), 1);
 });
 
 test('having a selection creates selectize with a selection', function(assert) {

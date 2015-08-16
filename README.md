@@ -172,6 +172,80 @@ Ember selectize supports both APIs.
 More info:
 - ember-selectize registers observers on object labels. This is great because if you change the label property anywhere in your application, selectize labels will also update.
 
+We will folow Ember Select's approach, which is really flexible:
+
+### Option Groups ###
+
+Ember-selectize supports two flavors of option grouping.
+
+#### `#1` optionGroupPath ####
+
+Set `optionGroupPath` to a path for a property to group for.
+Example:
+```javascript
+[
+  {
+    id: 1,
+    category: 'Nature',
+    title: 'This title will appear on select'
+  },
+  {
+    id: 2,
+    category: 'Nature',
+    title: 'This title will appear on select'
+  },
+  {
+    id: 3,
+    category: 'Another category',
+    title: 'This title will appear on select'
+  },
+  //...
+]
+```
+
+`optionGroupPath` would be `"content.category"`, which would group items according to that property automatically.
+
+like
+
+```handlebars
+{{ember-selectize optionGroupPath="content.category"}}
+```
+
+### `#2` groupedContent ###
+
+If you prefer you can group your items yourself and pass them to ember selectize.
+Just set the property `groupedContent` to an array with the following format:
+
+```javascript
+[
+  {
+    label: 'Nature',
+    content: [
+      {
+        id: 1,
+        title: 'This title will appear on select'
+      },
+      {
+        id: 2,
+        title: 'This title will appear on select'
+      }
+    ]
+  },
+  {
+    label: 'Another category',
+    content: [
+      //...
+    ]
+  },
+//...
+]
+```
+and in your template
+
+```handlebars
+{{ember-selectize groupedContent=someArray}}
+```
+
 ### Theme customization
 
 You can customize which theme to use in your Brocfile.
