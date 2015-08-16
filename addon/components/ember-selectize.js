@@ -45,7 +45,7 @@ export default Ember.Component.extend({
   /*
    * Contains optgroups.
    */
-  optgroups: computed('content.@each', 'groupedContent.@each', function() {
+  optgroups: computed('content.[]', 'groupedContent.[]', function() {
     var groupedContent = this.get('groupedContent');
     if (groupedContent) {
       return groupedContent.mapBy('label');
@@ -64,7 +64,7 @@ export default Ember.Component.extend({
    * Computes content from grouped content.
    * If `content` is set, this computed property is overriden and never executed.
    */
-  content: computed('groupedContent.@each', function() {
+  content: computed('groupedContent.[]', function() {
     var groupedContent = this.get('groupedContent');
     var _this = this;
 
@@ -88,7 +88,7 @@ export default Ember.Component.extend({
   }),
 
 
-  _optgroupsDidChange: Ember.observer('optgroups.@each', function() {
+  _optgroupsDidChange: Ember.observer('optgroups.[]', function() {
     if (!this._selectize) {
       return;
     }
@@ -641,7 +641,7 @@ export default Ember.Component.extend({
   * Here we process the inserted elements
   */
   _groupedContentArrayDidChange() {
-    this.notifyPropertyChange('groupedContent.@each');
+    this.notifyPropertyChange('groupedContent.[]');
   },
 
   /*
