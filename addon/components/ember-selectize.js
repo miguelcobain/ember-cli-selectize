@@ -199,8 +199,15 @@ export default Ember.Component.extend({
       this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(item => item.trim());
     }
 
+    //Rebuild into object for plugin option support
+    var plugins = {};
+    this.plugins.forEach(plugin => plugins[plugin] = {});
+    if (plugins['clear_selection'] && this.get('clear-selection')) {
+      plugins['clear_selection'].title = this.get('clear-selection');
+    }
+
     var options = {
-      plugins: this.plugins,
+      plugins: plugins,
       labelField: 'label',
       valueField: 'value',
       searchField: 'label',
@@ -214,7 +221,7 @@ export default Ember.Component.extend({
       onBlur: this._registerAction('on-blur'),
       onFocus: this._registerAction('on-focus'),
       onInitialize: this._registerAction('on-init'),
-      onClear: this._registerAction('on-clear')
+      onClear: Ember.run.bind(this, '_onClear')
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
@@ -308,6 +315,17 @@ export default Ember.Component.extend({
     this.set('filter', str);
     Ember.run.schedule('actions', this, function() {
       this.sendAction('update-filter', str);
+    });
+  },
+
+  /**
+  * Event callback that is triggered when user clears selection
+  */
+  _onClear() {
+    this.set('selection', null);
+
+    Ember.run.schedule('actions', this, function() {
+      this.sendAction('clear');
     });
   },
 
