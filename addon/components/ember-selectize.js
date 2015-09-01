@@ -437,15 +437,18 @@ export default Ember.Component.extend({
       } else {
         if (selection.then) {
           selection.then(function (resolved) {
+
+            var selectedItem = self._getWithExceptionHandling(resolved, self.get('_valuePath'));
+
             // Ensure that we don't overwrite new value
             if (get(self, 'selection') === selection) {
-              self._selectize.addItem(get(resolved, self.get('_valuePath')));
+              self._selectize.addItem(selectedItem);
             }
+
           });
         } else {
           this._selectize.addItem(get(selection, this.get('_valuePath')));
         }
-
       }
 
     } else {
@@ -454,6 +457,17 @@ export default Ember.Component.extend({
       this._selectize.showInput();
     }
   }),
+
+  // Fix: Restore error handling before Ember 2.0
+  _getWithExceptionHandling: function(obj, keyName) {
+    var propertyValue;
+    try {
+      propertyValue = get(obj, keyName);
+    } catch(e) {
+      propertyValue = undefined;
+    }
+    return propertyValue;
+  },
 
   /**
    * It is possible to control the selected item through its value.
