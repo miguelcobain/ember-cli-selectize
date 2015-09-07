@@ -929,3 +929,71 @@ test('selection from a Promise don\'t overwrite newer selection once resolved, w
 
   this.render();
 });
+
+test('content can be set from a Promise', function(assert) {
+  assert.expect(3);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  Ember.run(function() {
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('content', Ember.RSVP.Promise.resolve(Ember.A([yehuda, tom, seb])));
+
+    component.set('selection', tom);
+  });
+
+  this.render();
+
+  assert.equal(objectSize(component._selectize.options), 3);
+
+  assert.equal(component._selectize.items.length, 1);
+  assert.deepEqual(component._selectize.items, ["2"]);
+
+});
+
+test('content from a Promise don\'t overwrite newer content once resolved', function(assert) {
+  assert.expect(3);
+
+  var component = this.subject();
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  var done = assert.async();
+
+  Ember.run(function() {
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('content', new Ember.RSVP.Promise(function(resolve) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(Ember.A([yehuda, tom, seb]));
+        });
+        assert.equal(objectSize(component._selectize.options), 2, 'Should have 2 options and not 3');
+
+        assert.equal(component._selectize.items.length, 1);
+        assert.deepEqual(component._selectize.items, ["2"]);
+        done();
+      }, 40);
+    }));
+
+    component.set('content', new Ember.RSVP.Promise(function(resolve) {
+      Ember.run.later(function() {
+        Ember.run(function() {
+          resolve(Ember.A([yehuda, tom]));
+        });
+      }, 30);
+    }));
+
+    component.set('selection', tom);
+  });
+
+  this.render();
+
+});

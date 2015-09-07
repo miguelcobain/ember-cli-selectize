@@ -59,7 +59,7 @@ export default Ember.Component.extend({
     } else {
       //compute option groups from content
       var content = this.get('content');
-      if (!content) { return; }
+      if (!isArray(content)) { return; }
 
       var _this = this;
       return content.reduce(function(previousValue, item) {
@@ -428,7 +428,6 @@ export default Ember.Component.extend({
     if (!this._selectize) { return; }
 
     var multiple = this.get('multiple');
-    var self = this;
 
     if (selection) {
       if (multiple) {
@@ -443,10 +442,10 @@ export default Ember.Component.extend({
         this.selectionArrayDidChange(selection, 0, null, len);
       } else {
         if (selection.then) {
-          selection.then(function (resolved) {
+          selection.then(resolved => {
             // Ensure that we don't overwrite new value
-            if (get(self, 'selection') === selection) {
-              self._selectize.addItem(get(resolved, self.get('_valuePath')));
+            if (get(this, 'selection') === selection) {
+              this._selectize.addItem(get(resolved, this.get('_valuePath')));
             }
           });
         } else {
@@ -527,7 +526,7 @@ export default Ember.Component.extend({
   */
   _contentWillChange(content) {
     if (!this._selectize) { return; }
-    if (content) {
+    if (isArray(content)) {
       content.removeArrayObserver(this, {
         willChange: 'contentArrayWillChange',
         didChange: 'contentArrayDidChange'
@@ -553,10 +552,17 @@ export default Ember.Component.extend({
 
     if (!this._selectize) { return; }
 
-    if (content) {
+    if (isArray(content)) {
       content.addArrayObserver(this, {
         willChange: 'contentArrayWillChange',
         didChange: 'contentArrayDidChange'
+      });
+    } else if(content && content.then) {
+      content.then(resolved => {
+        // Ensure that we don't overwrite new value
+        if (get(this, 'content') === content) {
+          this.set('content', resolved);
+        }
       });
     }
     var len = content ? get(content, 'length') : 0;
