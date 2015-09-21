@@ -1,7 +1,7 @@
 # Ember Selectize Changelog
 
 ### 0.4.3 (Sep 21, 2015)
-- [6b660bb](https://github.com/marcemira/ember-cli-selectize/commit/6b660bbe3c0e8d67aafe881956b1ce6dd3e3a257) 
+- [#113](https://github.com/miguelcobain/ember-cli-selectize/pull/113)
 Ensure resolved is not null
 
 ### 0.4.2 (Sep 07, 2015)
