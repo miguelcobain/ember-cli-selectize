@@ -443,9 +443,11 @@ export default Ember.Component.extend({
       } else {
         if (selection.then) {
           selection.then(resolved => {
-            // Ensure that we don't overwrite new value
-            if (get(this, 'selection') === selection) {
-              this._selectize.addItem(get(resolved, this.get('_valuePath')));
+            if (resolved) {
+              // Ensure that we don't overwrite new value
+              if (get(this, 'selection') === selection) {
+                this._selectize.addItem(get(resolved, this.get('_valuePath')));
+              }
             }
           });
         } else {
