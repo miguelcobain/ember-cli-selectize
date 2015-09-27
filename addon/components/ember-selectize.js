@@ -478,7 +478,9 @@ export default Ember.Component.extend({
         return value === (valuePath ? get(obj, valuePath) : obj);
       }) : null;
 
-      this.set('selection', selection);
+      Ember.run.next(() => {
+        this.set('selection', selection);
+      });
     }
   }),
 

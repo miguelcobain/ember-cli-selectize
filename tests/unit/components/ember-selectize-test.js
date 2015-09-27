@@ -510,20 +510,27 @@ test('updating a selection updates selectize selection', function(assert) {
 test('updating a selection updates selectize value', function(assert) {
   var component = this.subject();
   var content = exampleObjectContent();
+
   Ember.run(function() {
     component.set('content', content);
     component.set('optionValuePath', 'content.id');
     component.set('optionLabelPath', 'content.label');
     component.set('value', 1);
   });
+
   this.render();
-  assert.equal(component._selectize.getValue(), 1);
-  assert.equal(component.get('selection'), content.objectAt(0));
+
+  Ember.run.next(function() {
+    assert.equal(component._selectize.getValue(), 1);
+    assert.equal(component.get('selection'), content.objectAt(0));
+  });
+
   Ember.run(function() {
     component._selectize.setValue(2);
+
+    assert.equal(component.get('value'), 2);
+    assert.equal(component.get('selection'), content.objectAt(1));
   });
-  assert.equal(component.get('value'), 2);
-  assert.equal(component.get('selection'), content.objectAt(1));
 });
 
 test('replacing a multiple selection updates selectize selection', function(assert) {
