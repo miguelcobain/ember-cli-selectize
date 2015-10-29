@@ -1,0 +1,10 @@
+{{ember-selectize
+  content=statuses
+  updateSelection=false
+  optionValuePath="content.id"
+  optionLabelPath="content.name"
+  selection=model.collection
+  select-item="selected"
+  class="x-status-select"
+  placeholder="select one status"
+}}

@@ -20,6 +20,7 @@ export default Ember.Component.extend({
 
   autocomplete: 'off',
   multiple: false,
+  updateSelection: true,
   maxItems: computed('multiple', function() {
     return this.get('multiple') ? null : 1;
   }),
@@ -200,6 +201,7 @@ export default Ember.Component.extend({
     }
 
     var options = {
+      updateSelection: this.get('updateSelection'),
       plugins: this.plugins,
       labelField: 'label',
       valueField: 'value',
@@ -364,7 +366,10 @@ export default Ember.Component.extend({
   * In addition to emitting the selection object, a selection value is sent via `select-value` based on `optionValuePath`
   */
   _updateSelection(selection) {
-    this.set('selection', selection);
+    var updateSelection = this.get('updateSelection');
+    if(updateSelection) {
+        this.set('selection', selection);
+    }
 
     // allow the observers and computed properties to run first
     Ember.run.schedule('actions', this, function() {
@@ -378,7 +383,10 @@ export default Ember.Component.extend({
     var _valuePath = this.get('_valuePath');
     var val = Ember.get(obj, _valuePath);
 
-    this.get('selection').addObject(obj);
+    var updateSelection = this.get('updateSelection');
+    if(updateSelection) {
+        this.get('selection').addObject(obj);
+    }
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('add-item', obj);
@@ -390,7 +398,10 @@ export default Ember.Component.extend({
     let _valuePath = this.get('_valuePath');
     let val = Ember.get(obj, _valuePath);
 
-    this.get('selection').removeObject(obj);
+    var updateSelection = this.get('updateSelection');
+    if(updateSelection) {
+        this.get('selection').removeObject(obj);
+    }
 
     Ember.run.schedule('actions', this, function() {
       this.sendAction('remove-item', obj);
