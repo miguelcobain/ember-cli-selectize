@@ -71,7 +71,7 @@ Its usage should be very similar to `Ember.Select`, but with additional features
   </tr>
   <tr>
     <td valign="top"><code>plugins</code></td>
-    <td valign="top">Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: <code>restore_on_backspace,drag_drop</code></td>
+    <td valign="top">Set this to a comma delimited list of selectize plugins to override the default plugin selection (currently remove_button). Note, not all plugins have been tested to work with ember-cli-selectize, YMMV. Example: <code>restore_on_backspace, drag_drop</code></td>
   </tr>
   <tr>
     <td valign="top"><code>placeholder</code> or <code>prompt</code></td>
