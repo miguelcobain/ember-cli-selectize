@@ -1,0 +1,13 @@
+{{ember-selectize
+  required=true
+  updateSelection=false
+  multiple=true
+  content=statuses
+  optionValuePath="content.id"
+  optionLabelPath="content.name"
+  selection=model.collection
+  add-item="add"
+  remove-item="remove"
+  class="x-status-select"
+  placeholder="select one status"
+}}

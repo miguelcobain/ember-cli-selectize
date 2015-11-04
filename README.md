@@ -58,6 +58,10 @@ Its usage should be very similar to `Ember.Select`, but with additional features
     <td valign="top">Ember-selectize will set this property to the selection that was made. Usually some property on a model, for example. If <code>multiple</code> is <code>true</code>, then it should be an array.</td>
   </tr>
   <tr>
+    <td valign="top"><code>updateSelection</code></td>
+    <td valign="top">Ember-selectize will update the bound options when you select-item/add-item/remove-item. Setting this option to false will prevent selectize from updating the selection directly. The default value for updateSelection starts as true so override with false. Example: <code>false</code></td>
+  </tr>
+  <tr>
     <td valign="top"><code>value</code></td>
     <td valign="top">Ember-selectize will set this property to the *value of the selection* that was made. It is not currently supported in multiple selection mode.</td>
   </tr>
