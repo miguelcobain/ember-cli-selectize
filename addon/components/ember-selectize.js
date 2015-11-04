@@ -196,7 +196,7 @@ export default Ember.Component.extend({
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
-      this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(item => item.trim());
+      this.plugins = this.plugins.split(/[\s,]+/);
     }
 
     var options = {
