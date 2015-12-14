@@ -479,6 +479,24 @@ test('having a selection creates selectize with a selection', function(assert) {
   assert.deepEqual(component._selectize.items, ['item 2']);
 });
 
+test('having a multiple selection adds remove_button plugin by default', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('multiple', true);
+  });
+  this.render();
+  assert.notEqual(component._selectize.settings.plugins.indexOf('remove_button'), -1);
+});
+
+test('not having a multiple selection does not add remove_button plugin by default', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('multiple', false);
+  });
+  this.render();
+  assert.equal(component._selectize.settings.plugins.indexOf('remove_button'), -1);
+});
+
 test('having a multiple selection creates selectize with a selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
