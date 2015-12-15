@@ -193,14 +193,22 @@ export default Ember.Component.extend({
 
   selectizeOptions: computed(function() {
     var allowCreate = this.get('create-item');
+    var multiple = this.get('multiple');
 
     //Split the passed in plugin config into an array.
     if (typeof this.plugins === 'string') {
       this.plugins = this.plugins === '' ? [] : this.plugins.split(', ').map(item => item.trim());
     }
 
+    var plugins = this.plugins.slice(0);
+
+    if (!multiple) {
+      var index = plugins.indexOf('remove_button');
+      plugins.splice(index, 1);
+    }
+
     var options = {
-      plugins: this.plugins,
+      plugins: plugins,
       labelField: 'label',
       valueField: 'value',
       searchField: 'label',
