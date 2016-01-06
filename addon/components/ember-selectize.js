@@ -206,12 +206,15 @@ export default Ember.Component.extend({
       var index = plugins.indexOf('remove_button');
       plugins.splice(index, 1);
     }
-
+    var searchField = this.get('searchField');
+    if(Ember.isEmpty(searchField)){
+      searchField = 'value';
+    }
     var options = {
       plugins: plugins,
       labelField: 'label',
       valueField: 'value',
-      searchField: 'label',
+      searchField: searchField,
       optgroupField: 'optgroup',
       create: allowCreate ? Ember.run.bind(this, '_create') : false,
       onItemAdd: Ember.run.bind(this, '_onItemAdd'),
