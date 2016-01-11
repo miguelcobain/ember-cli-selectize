@@ -274,6 +274,7 @@ If you don't want to include any css at all for some reason, simply assign `fals
 
 ## Running Tests
 
+* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
