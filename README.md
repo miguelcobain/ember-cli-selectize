@@ -105,16 +105,15 @@ Its usage should be very similar to `Ember.Select`, but with additional features
     <td valign="top">
       <code>optionFunction</code>, <code>itemFunction</code>, <code>optionCreateFunction</code>, <code>optgroupHeaderFunction</code>, <code>optgroupFunction</code>
     </td>
-    <td valign="top">Will be called on the component with two parameters <code>data</code> and <code>escape</code>. <code>escape</code> is a function to escape text. These functions are expected to build the desired html and return it as a string. These functions take precedence over their <code>Template</code> and <code>View</code> counterparts.</td>
+    <td valign="top">Will be called on the component with two parameters <code>data</code> and <code>escape</code>. <code>escape</code> is a function to escape text. These functions are expected to build the desired html and return it as a string or DOM elements. These functions take precedence over their <code>Component</code> counterparts.</td>
   </tr>
   <tr>
     <td valign="top">
-      <code>optionTemplate</code>, <code>itemTemplate</code>, <code>optionCreateTemplate</code>, <code>optgroupHeaderTemplate</code>,
-      <code>optgroupTemplate</code><br> <code>optionView</code>, <code>itemView</code>,
-      <code>optionCreateView</code>, <code>optgroupHeaderView</code>
-      and <code>optgroupView</code>
+      <code>optionComponent</code>, <code>itemComponent</code>,
+      <code>optionCreateComponent</code>, <code>optgroupHeaderComponent</code>
+      and <code>optgroupComponent</code>
     </td>
-    <td valign="top">Render using templates or views! View takes precedence over template, so if you do strange things like setting <code>optionView</code> and <code>optionTemplate</code>, the latter will be ignored. Might not work with all Ember versions. This is delicate. Check <a href="https://github.com/miguelcobain/ember-selectize/issues/13#issuecomment-56155784">this issue</a>.</td>
+    <td valign="top">Render using components! Functions (see above) take precedence over components, so if you do strange things like setting <code>optionFunction</code> and <code>optionComponent</code>, the latter will be ignored. Inside your component and template <code>data</code> will contain the data for the current item being rendered. An example component could be <code>Hi, {{data.firstname}}!</code></td>
   </tr>
   <tr>
     <td valign="top"><code>required</code></td>

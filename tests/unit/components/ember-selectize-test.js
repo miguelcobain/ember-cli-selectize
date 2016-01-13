@@ -3,6 +3,7 @@ import {
   moduleForComponent,
   test
 } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
 
 moduleForComponent('ember-selectize', 'Unit | Component | ember-selectize', {
   // Specify the other units that are required for this test
@@ -1013,5 +1014,62 @@ test('content from a Promise don\'t overwrite newer content once resolved', func
   });
 
   this.render();
+
+});
+
+test('renders components', function(assert) {
+
+  //this.register('template:components/foo-bar', hbs`Hi, Mom!`);
+  this.register('component:foo-bar', Ember.Component.extend({
+    layout: hbs`Hi, {{data.firstName}}!`
+  }));
+
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  var component = this.subject();
+
+  Ember.run(function() {
+    component.set('optionComponent', 'foo-bar');
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('content', Ember.A([yehuda, tom, seb]));
+    component.set('selection', tom);
+  });
+
+  this.render();
+
+  assert.deepEqual(component._selectize.items, ["2"]);
+  assert.equal(component._selectize.$dropdown_content.children().length, 3);
+  assert.equal(component._selectize.$dropdown_content.children().text(), 'Hi, Yehuda!Hi, Tom!Hi, Seb!');
+
+});
+
+test('renders function', function(assert) {
+
+  var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
+  var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
+  var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
+
+  var component = this.subject();
+
+  Ember.run(function() {
+    component.set('optionFunction', function(data) {
+      assert.equal(arguments.length, 2, 'arguments length');
+      return `<div>Hi, ${data.get('firstName')}!</div>`;
+    });
+    component.set('optionValuePath', 'id');
+    component.set('optionLabelPath', 'firstName');
+    component.set('content', Ember.A([yehuda, tom, seb]));
+    component.set('selection', tom);
+  });
+
+  this.render();
+
+  assert.deepEqual(component._selectize.items, ["2"]);
+  assert.equal(component._selectize.$dropdown_content.children().length, 3);
+  assert.equal(component._selectize.$dropdown_content.children().text(), 'Hi, Yehuda!Hi, Tom!Hi, Seb!');
 
 });

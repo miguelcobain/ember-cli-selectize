@@ -11,7 +11,7 @@
     "jquery": "1.11.3",
     "loader.js": "ember-cli/loader.js#3.4.0",
     "qunit": "~1.20.0",
-    "selectize": "~0.12.0"
+    "selectize": "miguelcobain/selectize.js#master"
   },
   "resolutions": {
     "qunit-notifications": "~0.1.0"

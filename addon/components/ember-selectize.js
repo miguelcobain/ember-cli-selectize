@@ -61,9 +61,8 @@ export default Ember.Component.extend({
       var content = this.get('content');
       if (!isArray(content)) { return; }
 
-      var _this = this;
-      return content.reduce(function(previousValue, item) {
-        return previousValue.addObject(get(item, _this.get('_groupPath')));
+      return content.reduce((previousValue, item) => {
+        return previousValue.addObject(get(item, this.get('_groupPath')));
       }, Ember.A());
     }
   }),
@@ -73,7 +72,6 @@ export default Ember.Component.extend({
    */
   content: computed('groupedContent.[]', function() {
     var groupedContent = this.get('groupedContent');
-    var _this = this;
 
     if (!groupedContent) { return; }
 
@@ -86,7 +84,7 @@ export default Ember.Component.extend({
       //set in the object. Use ObjectProxy to keep original object intact.
       var proxiedContent = content.map(item => {
         var proxy = { content: item };
-        proxy[_this.get('_groupPath')] = groupLabel;
+        proxy[this.get('_groupPath')] = groupLabel;
         return Ember.ObjectProxy.create(proxy);
       });
 
@@ -105,9 +103,8 @@ export default Ember.Component.extend({
     var optgroups = this.get('optgroups');
     if (!optgroups) { return; }
 
-    var _this = this;
     optgroups.forEach(group => {
-      _this._selectize.addOptionGroup(group, { label: group, value: group});
+      this._selectize.addOptionGroup(group, { label: group, value: group});
     });
   }),
 
@@ -144,49 +141,37 @@ export default Ember.Component.extend({
   */
   functionNames: ['option', 'item', 'option_create', 'optgroup_header', 'optgroup'],
   templateSuffix: 'Template',
-  viewSuffix: 'View',
+  componentSuffix: 'Component',
   functionSuffix: 'Function',
   renderOptions: computed(function() {
     var functionNames = this.get('functionNames');
     //this hash will contain the render functions
     var renderFunctions = {};
 
-    functionNames.forEach(function(item) {
+    functionNames.forEach(item => {
       // infer the function name by camelizing selectize's function and appending the function suffix (overridable)
       var functionSuffix = this.get('functionSuffix');
       var functionPropertyName = camelize(item) + functionSuffix;
       var renderFunction = this.get(functionPropertyName);
       // functions take precedence
       if (renderFunction) {
-        renderFunctions[item] = renderFunction.bind(this.get('targetObject'));
+        renderFunctions[item] = (data, escape) => {
+          return renderFunction(data.data || data, escape);
+        };
       } else {
         // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
-        var templateSuffix = this.get('templateSuffix');
-        var viewSuffix = this.get('viewSuffix');
-        var viewPropertyName = camelize(item) + viewSuffix;
-        var viewToRender = this.get(viewPropertyName);
+        var componentSuffix = this.get('componentSuffix');
+        var componentPropertyName = camelize(item) + componentSuffix;
+        var componentToRender = this.get(componentPropertyName);
 
-        var _this = this;
-        if (viewToRender) {
+        if (componentToRender) {
           // we have a view to render. set the function.
-          renderFunctions[item] = function(data) {
-            return _this._viewToString(viewToRender, data.data);
+          renderFunctions[item] = data => {
+            return this._componentToDOM(componentToRender, data.data || data);
           };
-        } else {
-          // there isn't a view to render. try to get a template.
-          // infer the template name by camelizing selectize's function and appending a template suffix (overridable)
-          var templatePropertyName = camelize(item) + templateSuffix;
-          var templateToRender = this.get(templatePropertyName);
-
-          if (templateToRender) {
-            // we have a template to render. set the function.
-            renderFunctions[item] = function(data) {
-              return _this._templateToString(templateToRender, data.data);
-            };
-          }
         }
       }
-    }, this);
+    });
 
     return renderFunctions;
   }),
@@ -790,46 +775,18 @@ export default Ember.Component.extend({
     }
   }),
 
-  _templateToString(templateName, data) {
-    var template = this.container.lookup('template:' + templateName);
+  _componentToDOM(componentName, data) {
+    var component = this.container.lookup('component:' + componentName);
 
-    if (!template) {
-      throw new TypeError('template ' + templateName + ' does not exist.');
+    if (!component) {
+      throw new TypeError('component ' + componentName + ' does not exist.');
     }
 
-    var controller = Ember.Controller.create(Ember.typeOf(data) === 'instance' ? data : {data: data});
-    var view = this.createChildView(Ember.View, {
-      template: template,
-      controller: controller,
-      container: this.get('container')
-    });
+    component.set('data', data);
 
-    return this._getStringFromView(view);
-  },
+    component.createElement();
 
-  _viewToString(viewName, data) {
-    var viewClass = this.container.lookup('view:' + viewName);
-
-    if (!viewClass) {
-      throw new TypeError('view ' + viewName + ' does not exist.');
-    }
-
-    var controller = Ember.Controller.create(Ember.typeOf(data) === 'instance' ? data : {data: data});
-    var view = this.createChildView(viewClass, {
-      controller: controller
-    });
-
-    return this._getStringFromView(view);
-  },
-
-  /*
-  * Encapsulates the logic of converting a view to a string
-  */
-  //FIX ME: this method does not work in Ember 1.8.0
-  //see http://git.io/VUYZ4g for more info
-  _getStringFromView(view) {
-    view.createElement();
-    return view.element.outerHTML;
+    return component.element;
   },
 
   _mergeSortField(options) {
