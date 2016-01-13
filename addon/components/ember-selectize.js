@@ -156,7 +156,7 @@ export default Ember.Component.extend({
       // functions take precedence
       if (renderFunction) {
         renderFunctions[item] = (data, escape) => {
-          return renderFunction(data.data || data, escape);
+          return renderFunction.call(this.get('targetObject') || this, data.data || data, escape);
         };
       } else {
         // infer the view name by camelizing selectize's function and appending a view suffix (overridable)
