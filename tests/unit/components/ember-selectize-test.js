@@ -1024,7 +1024,6 @@ test('renders components', function(assert) {
     layout: hbs`Hi, {{data.firstName}}!`
   }));
 
-
   var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
   var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
   var seb = Ember.Object.create({ id: 3, firstName: 'Seb' });
@@ -1045,6 +1044,11 @@ test('renders components', function(assert) {
   assert.equal(component._selectize.$dropdown_content.children().length, 3);
   assert.equal(component._selectize.$dropdown_content.children().text(), 'Hi, Yehuda!Hi, Tom!Hi, Seb!');
 
+  Ember.run(() => {
+    component.set('content.firstObject.firstName', 'Miguel');
+  });
+
+  assert.equal(component._selectize.$dropdown_content.children().text(), 'Hi, Miguel!Hi, Tom!Hi, Seb!', 'It rerenders!');
 });
 
 test('renders function', function(assert) {
