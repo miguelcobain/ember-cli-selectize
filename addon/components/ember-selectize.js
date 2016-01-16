@@ -226,6 +226,35 @@ export default Ember.Component.extend({
     return options;
   }),
 
+  onInit: function() {
+    Ember.run.schedule('afterRender', this, function () {
+      // ensure selectize is loaded
+      Ember.assert('selectize has to be loaded', typeof this.$().selectize === 'function');
+
+      //Create Selectize's instance
+      this.$().selectize(this.get('selectizeOptions'));
+
+      //Save the created selectize instance
+      this._selectize = this.$()[0].selectize;
+
+      //Some changes to content, selection and disabled could have happened before the Component was inserted into the DOM.
+      //We trigger all the observers manually to account for those changes.
+      this._disabledDidChange();
+      this._optgroupsDidChange();
+      if(this.get('groupedContent')) {
+        this._groupedContentDidChange();
+      }
+      this._contentDidChange();
+
+      var selection = this.get('selection');
+      var value = this.get('value');
+      if (!isNone(selection)) { this._selectionDidChange(); }
+      if (!isNone(value)) { this._valueDidChange(); }
+
+      this._loadingDidChange();
+    });
+  }.on('init'),
+
   didInsertElement() {
     // ensure selectize is loaded
     Ember.assert('selectize has to be loaded', typeof this.$().selectize === 'function');
