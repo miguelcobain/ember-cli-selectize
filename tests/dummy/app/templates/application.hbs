@@ -63,22 +63,16 @@
 </p>
 <p>Selected: <ul>{{#each itemValues as |v|}}<li>{{v.label}}</li>{{/each}}</ul></p>
 
-{{!--
-
-Throws error but renders anyway.
-See: https://github.com/emberjs/ember.js/issues/5534#issuecomment-81818954
-<h3><code>optionTemplate</code> usage example</h3>
+<h3><code>optionComponent</code> usage example</h3>
 <p>
   {{ember-selectize
     content=items
     optionValuePath="content.id"
     optionLabelPath="content.label"
     selection=item
-    optionTemplate="test"
-    placeholder="Select an item" }}
+    optionComponent="test-component"
+    placeholder="Select an item"}}
 </p>
-
---}}
 
 <h3>Delimiter example</h3>
 <p>

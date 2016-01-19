@@ -776,13 +776,16 @@ export default Ember.Component.extend({
   }),
 
   _componentToDOM(componentName, data) {
-    var component = this.container.lookup('component:' + componentName);
+    let componentLookup = this.container.lookup('component-lookup:main');
+    let ComponentClass = componentLookup.lookupFactory(componentName);
 
-    if (!component) {
+    if (!ComponentClass) {
       throw new TypeError('component ' + componentName + ' does not exist.');
     }
 
-    component.set('data', data);
+    let component = ComponentClass.create({
+      data
+    });
 
     component.createElement();
 
