@@ -15,11 +15,12 @@ const { camelize } = Ember.String;
  * The goal is to use this as a near dropin replacement for Ember.Select.
  */
 export default Ember.Component.extend({
-  attributeBindings: ['multiple', 'autocomplete', 'required'],
+  attributeBindings: ['multiple', 'autocomplete', 'required', 'tabindex'],
   classNames: ['ember-selectize'],
 
   autocomplete: 'off',
   multiple: false,
+  tabindex: 0,
   maxItems: computed('multiple', function() {
     return this.get('multiple') ? null : 1;
   }),
