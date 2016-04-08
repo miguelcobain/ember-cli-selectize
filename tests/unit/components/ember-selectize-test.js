@@ -45,6 +45,17 @@ test('required attribute is bound', function(assert) {
   assert.equal(this.$().attr('required'), 'required');
 });
 
+test('tabindex attribute is properly set to input', function(assert){
+  var component = this.subject();
+  var tabindex = 6;
+
+  Ember.run(function() {
+    component.set('tabindex', tabindex);
+  });
+  
+  assert.equal(this.$().parent().find('input').attr('tabindex'), tabindex);
+});
+
 test('maxItems is passed to selectize', function(assert) {
   var component = this.subject();
   Ember.run(function() {

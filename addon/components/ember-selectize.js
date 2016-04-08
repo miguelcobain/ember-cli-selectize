@@ -20,6 +20,7 @@ export default Ember.Component.extend({
 
   autocomplete: 'off',
   multiple: false,
+  tabindex: 0,
   maxItems: computed('multiple', function() {
     return this.get('multiple') ? null : 1;
   }),
