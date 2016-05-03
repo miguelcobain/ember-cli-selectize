@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import computedPolyfill from 'ember-new-computed';
+import getOwner from 'ember-getowner-polyfill';
 
 const {
   computed,
@@ -777,7 +778,7 @@ export default Ember.Component.extend({
   }),
 
   _componentToDOM(componentName, data) {
-    let componentLookup = this.container.lookup('component-lookup:main');
+    let componentLookup = getOwner(this).lookup('component-lookup:main');
     let ComponentClass = componentLookup.lookupFactory(componentName);
 
     if (!ComponentClass) {
