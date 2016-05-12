@@ -443,6 +443,10 @@ export default Ember.Component.extend({
               if (get(this, 'selection') === selection) {
                 this._selectize.addItem(get(resolved, this.get('_valuePath')));
               }
+            } else {
+              //selection was changed to a falsy value. Clear selectize.
+              this._selectize.clear();
+              this._selectize.showInput();
             }
           });
         } else {
