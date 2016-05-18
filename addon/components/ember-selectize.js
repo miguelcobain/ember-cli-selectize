@@ -221,7 +221,7 @@ export default Ember.Component.extend({
                           'searchField'];
 
     generalOptions.forEach(function(option) {
-      options[option] = this.get(option);
+      options[option] = this.get(option) || options[option];
     }, this);
 
     options = this._mergeSortField(options);
