@@ -217,10 +217,11 @@ export default Ember.Component.extend({
                           'maxOptions', 'maxItems', 'hideSelected',
                           'closeAfterSelect', 'allowEmptyOption',
                           'scrollDuration', 'loadThrottle', 'preload',
-                          'dropdownParent', 'addPrecedence', 'selectOnTab'];
+                          'dropdownParent', 'addPrecedence', 'selectOnTab',
+                          'searchField'];
 
     generalOptions.forEach(function(option) {
-      options[option] = this.get(option);
+      options[option] = this.get(option) || options[option];
     }, this);
 
     options = this._mergeSortField(options);
