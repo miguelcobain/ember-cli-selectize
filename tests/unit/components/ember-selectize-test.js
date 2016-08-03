@@ -25,6 +25,14 @@ test('it renders', function(assert) {
   //test select tagname and ember-selectize class
 });
 
+test('name attribute is bound', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('name', 'pouet');
+  });
+  assert.equal(this.$().attr('name'), 'pouet');
+});
+
 test('multiple attribute is bound', function(assert) {
   var component = this.subject();
   Ember.run(function() {
