@@ -4,6 +4,11 @@
 module.exports = {
   name: 'ember-cli-selectize',
   included: function(app) {
+    // see: https://github.com/ember-cli/ember-cli/issues/3718
+    if (typeof app.import !== 'function' && app.app) {
+      app = app.app;
+    }
+    
     //default theme name is 'default'
     var options = app.options['ember-cli-selectize'] || { theme: 'default' };
 
