@@ -748,6 +748,10 @@ export default Ember.Component.extend({
       data: sender
     };
 
+    if (get(sender, this.get('_groupPath'))) {
+      data.optgroup = get(sender, this.get('_groupPath'));
+    }
+
     if(this._selectize.getOption(data.value).length !== 0) {
       this._selectize.updateOption(data.value, data);
     } else {
