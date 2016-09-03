@@ -16,9 +16,10 @@ const { camelize } = Ember.String;
  * The goal is to use this as a near dropin replacement for Ember.Select.
  */
 export default Ember.Component.extend({
-  attributeBindings: ['name', 'multiple', 'autocomplete', 'required', 'tabindex'],
+  attributeBindings: ['name', 'multiple', 'autocomplete', 'required', 'tabindex', 'readOnly'],
   classNames: ['ember-selectize'],
 
+  readOnly: false,
   autocomplete: 'off',
   multiple: false,
   tabindex: 0,
@@ -238,6 +239,15 @@ export default Ember.Component.extend({
 
     //Save the created selectize instance
     this._selectize = this.$()[0].selectize;
+
+    {
+      let readOnly = !!this.get('readOnly');
+
+      if (readOnly) {
+        Ember.assert('selectize API may have changed', !!this._selectize.$control_input);
+        this._selectize.$control_input.attr('readOnly', !!this.get('readOnly'));
+      }
+    }
 
     //Some changes to content, selection and disabled could have happened before the Component was inserted into the DOM.
     //We trigger all the observers manually to account for those changes.
