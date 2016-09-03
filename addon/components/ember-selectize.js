@@ -245,7 +245,7 @@ export default Ember.Component.extend({
 
       if (readOnly) {
         Ember.assert('selectize API may have changed', !!this._selectize.$control_input);
-        this._selectize.$control_input.attr('readOnly', !!this.get('readOnly'));
+        this._selectize.$control_input.attr('readOnly', !!readOnly);
       }
     }
 
