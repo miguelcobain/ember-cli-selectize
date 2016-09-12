@@ -796,7 +796,7 @@ export default Ember.Component.extend({
 
     component.createElement();
 
-    return component.element;
+    return component.element.outerHTML;
   },
 
   _mergeSortField(options) {
