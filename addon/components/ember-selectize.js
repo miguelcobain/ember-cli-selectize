@@ -783,9 +783,7 @@ export default Ember.Component.extend({
   }),
 
   _componentToDOM(componentName, data) {
-    /*let componentLookup = getOwner(this).lookup('component-lookup:main');
-    let ComponentClass = componentLookup.lookupFactory(componentName);*/
-    let ComponentClass = getOwner(this)._lookupFactory(`component:${componentName}`);
+    let ComponentClass = getOwner(this).resolveRegistration(`component:${componentName}`);
 
     if (!ComponentClass) {
       throw new TypeError('component ' + componentName + ' does not exist.');
