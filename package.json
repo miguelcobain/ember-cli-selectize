@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "ember-cli-babel": "^5.1.6",
+    "ember-cli-import-polyfill": "^0.2.0",
     "ember-getowner-polyfill": "1.0.1",
     "ember-new-computed": "^1.0.0"
   },

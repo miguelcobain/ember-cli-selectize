@@ -4,22 +4,24 @@
 module.exports = {
   name: 'ember-cli-selectize',
   included: function(app) {
-    // see: https://github.com/ember-cli/ember-cli/issues/3718
-    if (typeof app.import !== 'function' && app.app) {
-      app = app.app;
-    }
-    
+    this._super.included.apply(this, arguments);
+
+    var host = this._findHost();
+
     //default theme name is 'default'
-    var options = app.options['ember-cli-selectize'] || { theme: 'default' };
+    var options = { theme: 'default' };
+    if (host.options && host.options['ember-cli-selectize']) {
+      options = host.options['ember-cli-selectize'];
+    }
 
     if (process.env.EMBER_CLI_FASTBOOT !== 'true') {
       //import theme based on options
-      if (options.theme){
-        app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
+      if (options.theme) {
+        this.import(host.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
       }
 
       //import javascript
-      app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
+      this.import(host.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
     }
   }
 };
