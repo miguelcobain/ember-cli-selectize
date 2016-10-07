@@ -1067,8 +1067,8 @@ test('content from a Promise don\'t overwrite newer content once resolved', func
 
 test('renders components', function(assert) {
 
-  this.register('template:components/foo-bar', hbs`Hi, {{data.firstName}}!`);
   this.register('component:foo-bar', Ember.Component.extend({
+    layout: hbs`Hi, {{data.firstName}}!`
   }));
 
   var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
