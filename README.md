@@ -167,6 +167,11 @@ Ember is moving towards a paradigm that encourages the use of actions. With this
     <td valign="top"><code>on-init</code></td>
     <td valign="top">Sent once the control is completely initialized.</td>
   </tr>
+  <tr>
+    <td valign="top"><code>score</code></td>
+    <td valign="top">Overrides the default score() method if a cutom one is passed as an option to
+    the component.</td>
+  </tr>
 </table>
 
 Ember selectize supports both APIs.

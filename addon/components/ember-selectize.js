@@ -206,6 +206,7 @@ export default Ember.Component.extend({
       onType: Ember.run.bind(this, '_onType'),
       render: this.get('renderOptions'),
       placeholder: this.get('placeholder'),
+      score: this.get('score'),
       onBlur: this._registerAction('on-blur'),
       onFocus: this._registerAction('on-focus'),
       onInitialize: this._registerAction('on-init'),
