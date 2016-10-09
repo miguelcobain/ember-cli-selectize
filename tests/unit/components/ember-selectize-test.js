@@ -564,6 +564,21 @@ test('updating a selection updates selectize value', function(assert) {
   assert.equal(component.get('selection'), content.objectAt(1));
 });
 
+test('reorder a selection updates selectize value', function(assert) {
+  var component = this.subject();
+  Ember.run(function() {
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 2', 'item 3']));
+    component.set('multiple', true);
+  });
+  this.render();
+  Ember.run(function() {
+    component._selectize.setValue(['item 3', 'item 2']);
+  });
+  assert.deepEqual(component.get('value'), ['item 3', 'item 2']);
+  assert.deepEqual(component.get('selection'), ['item 3', 'item 2']);
+});
+
 test('replacing a multiple selection updates selectize selection', function(assert) {
   var component = this.subject();
   Ember.run(function() {
@@ -843,6 +858,32 @@ test('it sends remove-value action when an item is deselected in multiple mode',
 
   Ember.run(function() {
     component._onItemRemove('item 2');
+  });
+});
+
+test('it sends reorder-items action when an item is reordered in multiple mode', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+
+  var targetObject = {
+    externalAction: function(obj) {
+      assert.deepEqual(obj, ['item 3', 'item 1', 'item 2'], 'externalAction was called with proper argument');
+    }
+  };
+
+  Ember.run(function() {
+    component.set('multiple', true);
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('selection', Ember.A(['item 1', 'item 2', 'item 3']));
+    component.set('reorder-items', 'externalAction');
+    component.set('targetObject', targetObject);
+  });
+
+  this.render();
+
+  Ember.run(function() {
+    component._onChange(['item 3', 'item 1', 'item 2']);
   });
 });
 
