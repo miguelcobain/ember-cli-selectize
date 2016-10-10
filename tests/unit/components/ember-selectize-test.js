@@ -628,10 +628,10 @@ test('it sends create-item action when an item is created in selectize', functio
     }
   };
   this.render();
-  component.set('create-item', 'externalAction');
-  component.set('targetObject', targetObject);
 
   Ember.run(function() {
+    component.set('create-item', 'externalAction');
+    component.set('targetObject', targetObject);
     component._create(testText, function() {});
   });
 });
@@ -1067,9 +1067,8 @@ test('content from a Promise don\'t overwrite newer content once resolved', func
 
 test('renders components', function(assert) {
 
-  this.register('component:foo-bar', Ember.Component.extend({
-    layout: hbs`Hi, {{data.firstName}}!`
-  }));
+  this.register('component:foo-bar', Ember.Component.extend({}));
+  this.register('template:components/foo-bar', hbs`Hi, {{data.firstName}}!`);
 
   var yehuda = Ember.Object.create({ id: 1, firstName: 'Yehuda' });
   var tom = Ember.Object.create({ id: 2, firstName: 'Tom' });
