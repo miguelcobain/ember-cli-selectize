@@ -4,7 +4,10 @@
 module.exports = {
   name: 'ember-cli-selectize',
   included: function(app) {
-    this._super.included.apply(this, arguments);
+    // workaround for https://github.com/ember-cli/ember-cli/issues/3718
+    if (typeof app.import !== 'function' && app.app) {
+      app = app.app;
+    }
 
     var host = this._findHost();
 
