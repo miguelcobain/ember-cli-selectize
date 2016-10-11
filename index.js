@@ -6,22 +6,35 @@ module.exports = {
   included: function(app) {
     this._super.included.apply(this, arguments);
 
-    var host = this._findHost();
+    // If the addon has the _findHost() method (in ember-cli >= 2.7.0), we'll just
+    // use that.
+    if (typeof this._findHost === 'function') {
+      app = this._findHost();
+    }
+
+    // Otherwise, we'll use this implementation borrowed from the _findHost()
+    // method in ember-cli.
+    // Keep iterating upward until we don't have a grandparent.
+    // Has to do this grandparent check because at some point we hit the project.
+    var current = this;
+    do {
+      app = current.app || app;
+    } while (current.parent.parent && (current = current.parent));
 
     //default theme name is 'default'
     var options = { theme: 'default' };
-    if (host.options && host.options['ember-cli-selectize']) {
-      options = host.options['ember-cli-selectize'];
+    if (app.options && app.options['ember-cli-selectize']) {
+      options = app.options['ember-cli-selectize'];
     }
 
     if (process.env.EMBER_CLI_FASTBOOT !== 'true') {
       //import theme based on options
-      if (options.theme) {
-        this.import(host.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
+      if (app.theme) {
+        app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
       }
 
       //import javascript
-      this.import(host.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
+      app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
     }
   }
 };
