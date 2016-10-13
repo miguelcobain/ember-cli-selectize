@@ -237,9 +237,9 @@ export default Component.extend({
                           'dropdownParent', 'addPrecedence', 'selectOnTab',
                           'searchField'];
 
-    generalOptions.forEach(function(option) {
-      options[option] = this.get(option) || options[option];
-    }, this);
+    generalOptions.forEach((option) => {
+      options[option] = this.getWithDefault(option, options[option]);
+    });
 
     options = this._mergeSortField(options);
 
