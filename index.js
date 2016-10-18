@@ -29,7 +29,7 @@ module.exports = {
 
     if (process.env.EMBER_CLI_FASTBOOT !== 'true') {
       //import theme based on options
-      if (app.theme) {
+      if (options.theme) {
         app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
       }
 
