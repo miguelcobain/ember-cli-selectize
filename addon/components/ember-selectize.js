@@ -486,6 +486,7 @@ export default Component.extend({
    * It is possible to control the selected item through its value.
    */
   _valueDidChange: observer('value', function() {
+    if (this.get('multiple')) { return; }
     var content = this.get('content');
     var value = this.get('value');
     var selectedValue = this.getValueFor(this.get('selection'));
