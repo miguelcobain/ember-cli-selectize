@@ -207,7 +207,9 @@ export default Component.extend({
 
     if (!multiple) {
       var index = plugins.indexOf('remove_button');
-      plugins.splice(index, 1);
+      if (index !== -1) {
+        plugins.splice(index, 1);
+      }
     }
 
     var options = {
