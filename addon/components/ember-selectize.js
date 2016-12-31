@@ -670,7 +670,7 @@ export default Component.extend({
   * Triggered before the grouped content array changes
   * Here we process the removed elements
   */
-  _groupedContentArrayWillChange: Ember.K,
+  _groupedContentArrayWillChange() {},
 
   /*
   * Triggered after the grouped content array changes
