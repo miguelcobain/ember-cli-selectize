@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import computedPolyfill from 'ember-new-computed';
-import getOwner from 'ember-getowner-polyfill';
 
 const {
   Component,
@@ -13,7 +12,8 @@ const {
   isNone,
   typeOf,
   String: { camelize },
-  assert
+  assert,
+  getOwner
 } = Ember;
 const assign = Ember.assign || Ember.merge;
 
