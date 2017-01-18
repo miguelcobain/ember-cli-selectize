@@ -237,7 +237,7 @@ export default Component.extend({
                           'closeAfterSelect', 'allowEmptyOption',
                           'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab',
-                          'searchField'];
+                          'searchField', 'readOnly'];
 
     generalOptions.forEach((option) => {
       options[option] = this.getWithDefault(option, options[option]);
