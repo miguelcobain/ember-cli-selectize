@@ -321,7 +321,7 @@ export default Component.extend({
   * Event callback that is triggered when user press backspace, or delete
   */
   _onDelete() {
-    return this.get("readOnly") !== true
+    return this.get("readOnly") !== true;
   },
   /**
   * Event callback that is triggered when user types in the input element
