@@ -660,6 +660,35 @@ test('it sends select-item action when an item is selected', function(assert) {
   });
 });
 
+test('it does not send select-item action when selection promise resolves', function(assert) {
+  assert.expect(1);
+
+  var component = this.subject();
+  var selectItem = null;
+
+  var targetObject = {
+    externalAction: function(item) {
+      selectItem = item;
+    }
+  };
+
+  var selection = Ember.RSVP.Promise.resolve("item 1");
+
+  Ember.run(function() {
+    component.set('content', Ember.A(['item 1', 'item 2', 'item 3', 'item 4']));
+    component.set('select-item', 'externalAction');
+    component.set('targetObject', targetObject);
+    component.set('selection', selection);
+  });
+
+  this.render();
+
+  selection.then(function() {
+    assert.equal(selectItem, null, 'externalAction was not called.');
+  });
+
+});
+
 test('it sends select-value action when an item is selected', function(assert) {
   assert.expect(1);
 

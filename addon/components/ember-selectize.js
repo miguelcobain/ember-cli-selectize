@@ -219,7 +219,7 @@ export default Component.extend({
       searchField: 'label',
       optgroupField: 'optgroup',
       create: allowCreate ? run.bind(this, '_create') : false,
-      onItemAdd: run.bind(this, '_onItemAdd'),
+      onChange: run.bind(this, '_onItemAdd'),
       onItemRemove: run.bind(this, '_onItemRemove'),
       onType: run.bind(this, '_onType'),
       render: this.get('renderOptions'),
@@ -463,7 +463,7 @@ export default Component.extend({
             if (resolved) {
               // Ensure that we don't overwrite new value
               if (get(this, 'selection') === selection) {
-                this._selectize.addItem(this.getValueFor(resolved));
+                this._selectize.addItem(this.getValueFor(resolved), true);
               }
             } else {
               //selection was changed to a falsy value. Clear selectize.
@@ -472,7 +472,7 @@ export default Component.extend({
             }
           });
         } else {
-          this._selectize.addItem(this.getValueFor(selection));
+          this._selectize.addItem(this.getValueFor(selection), true);
         }
 
       }
@@ -530,7 +530,7 @@ export default Component.extend({
   */
   selectionObjectWasAdded(obj) {
     if (this._selectize) {
-      this._selectize.addItem(this.getValueFor(obj));
+      this._selectize.addItem(this.getValueFor(obj), true);
     }
   },
 
