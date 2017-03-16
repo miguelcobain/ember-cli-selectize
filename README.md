@@ -1,5 +1,7 @@
 # Ember-cli-selectize [![Build Status](https://travis-ci.org/miguelcobain/ember-cli-selectize.svg)](https://travis-ci.org/miguelcobain/ember-cli-selectize) [![Ember Observer Score](http://emberobserver.com/badges/ember-cli-selectize.svg)](http://emberobserver.com/addons/ember-cli-selectize)
 
+# NOTE: consider using [ember-power-select](http://www.ember-power-select.com/)
+
 An Ember and Selectize integration, packaged as an Ember-cli addon. Check [Selectize](http://brianreavis.github.io/selectize.js/) and [Ember-cli](http://www.ember-cli.com/)!
 
 ## Demo
