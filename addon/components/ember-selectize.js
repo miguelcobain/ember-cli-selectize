@@ -211,12 +211,15 @@ export default Component.extend({
         plugins.splice(index, 1);
       }
     }
-
+    var searchField = this.get('searchField');
+    if(Ember.isEmpty(searchField)){
+      searchField = 'value';
+    }
     var options = {
       plugins: plugins,
       labelField: 'label',
       valueField: 'value',
-      searchField: 'label',
+      searchField: searchField,
       optgroupField: 'optgroup',
       create: allowCreate ? run.bind(this, '_create') : false,
       onItemAdd: run.bind(this, '_onItemAdd'),
