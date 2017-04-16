@@ -598,7 +598,11 @@ export default Component.extend({
   */
   contentArrayWillChange(array, idx, removedCount) {
     for (var i = idx; i < idx + removedCount; i++) {
-      this.objectWasRemoved(array.objectAt(i));
+      var obj = array.objectAt(i);
+      if (obj.isError) {
+        continue;
+      }
+      this.objectWasRemoved(obj);
     }
 
     if (this._selectize) {
