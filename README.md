@@ -2,7 +2,7 @@
 
 # NOTE: consider using [ember-power-select](http://www.ember-power-select.com/)
 
-An Ember and Selectize integration, packaged as an Ember-cli addon. Check [Selectize](http://brianreavis.github.io/selectize.js/) and [Ember-cli](http://www.ember-cli.com/)!
+An Ember and Selectize integration, packaged as an Ember-cli addon. Check [Selectize](https://selectize.github.io/selectize.js/) and [Ember-cli](http://www.ember-cli.com/)!
 
 ## Demo
 
