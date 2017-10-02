@@ -1,6 +1,13 @@
 /* jshint node: true */
 'use strict';
 
+var path = require('path');
+var existsSync = require('exists-sync');
+var fastbootTransform = require('fastboot-transform');
+var Funnel = require('broccoli-funnel');
+var MergeTrees = require('broccoli-merge-trees');
+
+
 module.exports = {
   name: 'ember-cli-selectize',
   included: function(app) {
@@ -27,14 +34,32 @@ module.exports = {
       options = app.options['ember-cli-selectize'];
     }
 
-    if (process.env.EMBER_CLI_FASTBOOT !== 'true') {
-      //import theme based on options
-      if (options.theme) {
-        app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
-      }
-
-      //import javascript
-      app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
+    //import theme based on options
+    if (options.theme) {
+      app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
     }
+
+    //import javascript
+    app.import('vendor/selectize/selectize.js');
+  },
+
+  treeForVendor(tree) {
+    var trees = [];
+
+    if (tree) {
+      trees.push(tree);
+    }
+
+    var selectizePath = path.join(this.project.root, this.app.bowerDirectory, 'selectize', 'dist', 'js', 'standalone');
+    if (existsSync(selectizePath)) {
+      var selectizeJsTree = fastbootTransform(new Funnel(selectizePath, {
+        files: ['selectize.js'],
+        destDir: 'selectize'
+      }));
+
+      trees.push(selectizeJsTree);
+    }
+
+    return new MergeTrees(trees);
   }
 };
