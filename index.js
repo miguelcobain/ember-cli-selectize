@@ -1,11 +1,30 @@
 /* jshint node: true */
 'use strict';
 
+const fastbootTransform = require('fastboot-transform');
+
 module.exports = {
   name: 'ember-cli-selectize',
-  included: function(app) {
-    this._super.included.apply(this, arguments);
+  options: {
+    nodeAssets: {
+      selectize() {
+        return {
+          srcDir: 'dist',
+          import: {
+            include: [
+              'js/standalone/selectize.js',
+              `css/selectize.${this.theme}.css`
+            ],
+            processTree(tree) {
+              return fastbootTransform(tree);
+            }
+          }
+        };
+      }
+    }
+  },
 
+  included(app) {
     // If the addon has the _findHost() method (in ember-cli >= 2.7.0), we'll just
     // use that.
     if (typeof this._findHost === 'function') {
@@ -21,20 +40,12 @@ module.exports = {
       app = current.app || app;
     } while (current.parent.parent && (current = current.parent));
 
-    //default theme name is 'default'
-    var options = { theme: 'default' };
-    if (app.options && app.options['ember-cli-selectize']) {
-      options = app.options['ember-cli-selectize'];
+    // default theme name is 'default'
+    this.theme = 'default';
+    if (app.options && app.options['ember-cli-selectize'] && app.options['ember-cli-selectize'].theme) {
+      this.theme = app.options['ember-cli-selectize'].theme;
     }
 
-    if (process.env.EMBER_CLI_FASTBOOT !== 'true') {
-      //import theme based on options
-      if (options.theme) {
-        app.import(app.bowerDirectory + '/selectize/dist/css/selectize.' + options.theme + '.css');
-      }
-
-      //import javascript
-      app.import(app.bowerDirectory + '/selectize/dist/js/standalone/selectize.js');
-    }
+    this._super.included.apply(this, arguments);
   }
 };
