@@ -2,8 +2,7 @@
   "name": "ember-cli-selectize",
   "dependencies": {
     "ember": "beta",
-    "ember-cli-shims": "0.1.1",
-    "selectize": "miguelcobain/selectize.js#master"
+    "ember-cli-shims": "0.1.1"
   },
   "resolutions": {
     "ember": "beta"
