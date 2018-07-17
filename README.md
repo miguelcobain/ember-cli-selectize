@@ -8,26 +8,10 @@ An Ember and Selectize integration, packaged as an Ember-cli addon. Check [Selec
 
 Check (old demo): http://miguelcobain.github.io/ember-selectize
 
-## Browser Support
-
-Should run wherever Ember and Selectize run.
-
 ## Installation
-
-### As an Ember CLI addon
-
-Run either command below depending on Ember version in your project folder.
-
-For Ember CLI >= `0.2.3`:
 
 ```shell
 ember install ember-cli-selectize
-```
-
-For Ember CLI < `0.2.3`:
-
-```shell
-ember install:addon ember-cli-selectize
 ```
 
 ## Usage
@@ -287,13 +271,8 @@ If you don't want to include any css at all for some reason, simply assign `fals
 * `ember test`
 * `ember test --server`
 
-`Selectize`'s tests assures that everything is ok between Selectize<->DOM.
-`Ember.Select`'s tests also test the DOM. This is unecessary in this project.
-
-Ember-selectize tests should be focused between Ember<->Selectize.
-
 ## Building
 
 * `ember build`
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
