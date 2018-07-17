@@ -807,12 +807,12 @@ export default Component.extend({
     let owner = getOwner(this);
     let componentLookupKey = `component:${name}`;
     let layoutLookupKey = `template:components/${name}`;
-    let layout = owner._lookupFactory(layoutLookupKey);
-    let component = owner._lookupFactory(componentLookupKey);
+    let layout = owner.factoryFor(layoutLookupKey);
+    let component = owner.factoryFor(componentLookupKey);
 
     if (layout && !component) {
       owner.register(componentLookupKey, Component);
-      component = owner._lookupFactory(componentLookupKey);
+      component = owner.factoryFor(componentLookupKey);
     }
 
     return { component, layout };
