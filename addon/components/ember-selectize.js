@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import computedPolyfill from 'ember-new-computed';
 
 const {
   Component,
@@ -13,9 +12,9 @@ const {
   typeOf,
   String: { camelize },
   assert,
+  assign,
   getOwner
 } = Ember;
-const assign = Ember.assign || Ember.merge;
 
 /**
  * Ember.Selectize is an Ember View that encapsulates a Selectize component.
@@ -46,11 +45,11 @@ export default Component.extend({
   optionGroupPath: 'content.group',
 
   selection: null,
-  value: computedPolyfill('selection', {
+  value: computed('selection', {
     get() {
       var valuePath = this.get('_valuePath');
       var selection = this.get('selection');
-      return valuePath && selection ? Ember.get(selection, valuePath) : selection;
+      return valuePath && selection ? get(selection, valuePath) : selection;
     },
     set(key, value) {
       return value;
