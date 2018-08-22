@@ -227,7 +227,8 @@ export default Component.extend({
       onBlur: this._registerAction('on-blur'),
       onFocus: this._registerAction('on-focus'),
       onInitialize: this._registerAction('on-init'),
-      onClear: this._registerAction('on-clear')
+      onClear: this._registerAction('on-clear'),
+      onDelete: run.bind(this, '_onDelete'),
     };
 
     var generalOptions = ['delimiter', 'diacritics', 'createOnBlur',
@@ -236,7 +237,7 @@ export default Component.extend({
                           'closeAfterSelect', 'allowEmptyOption',
                           'scrollDuration', 'loadThrottle', 'preload',
                           'dropdownParent', 'addPrecedence', 'selectOnTab',
-                          'searchField'];
+                          'searchField', 'readOnly'];
 
     generalOptions.forEach((option) => {
       options[option] = this.getWithDefault(option, options[option]);
@@ -313,8 +314,14 @@ export default Component.extend({
       args.unshift(action);
       this.sendAction.apply(this, args);
     });
-  },
+  },  
 
+  /**
+  * Event callback that is triggered when user press backspace, or delete
+  */
+  _onDelete() {
+    return this.get("readOnly") !== true;
+  },
   /**
   * Event callback that is triggered when user types in the input element
   */
